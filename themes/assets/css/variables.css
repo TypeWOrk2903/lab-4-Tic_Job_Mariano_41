@@ -1,0 +1,33 @@
+/* =====================================================
+   WebMovies – Design Tokens
+   Neumorphic High-Contrast system
+   ===================================================== */
+
+:root {
+  /* ---- Tipografia ---- */
+  --font-sans: 'Outfit', 'Segoe UI', system-ui, sans-serif;
+  --font-display: 'Oswald', 'Impact', sans-serif;
+
+  /* ---- Espaçamento base ---- */
+  --space-xs:  0.25rem;
+  --space-sm:  0.5rem;
+  --space-md:  1rem;
+  --space-lg:  1.5rem;
+  --space-xl:  2.5rem;
+
+  /* ---- Raios de borda ---- */
+  --radius-sm:  8px;
+  --radius-md:  16px;
+  --radius-lg:  24px;
+  --radius-pill: 999px;
+
+  /* ---- Transições ---- */
+  --transition-fast:   150ms ease;
+  --transition-normal: 250ms ease;
+  --transition-slow:   400ms ease;
+
+  /* ---- Z-index ---- */
+  --z-header:  10;
+  --z-modal:   50;
+  --z-tooltip: 30;
+}

@@ -1,0 +1,106 @@
+/* =====================================================
+   WebMovies – Dark & Light Neumorphic Themes
+   Aplicado como classe no <body>: dark-theme / light-theme
+   ===================================================== */
+
+/* ─── DARK (padrão) ──────────────────────────────── */
+body.dark-theme {
+  /* Superfícies */
+  --color-bg:          #141a21;
+  --color-panel:       #1a2230;
+  --color-panel-hover: #1e2838;
+
+  /* Texto */
+  --color-text:        #e8edf4;
+  --color-text-muted:  #7a8a9e;
+  --color-text-subtle: #3d4f62;
+
+  /* Destaques */
+  --color-cyan:        #00e5ff;
+  --color-cyan-dim:    rgba(0, 229, 255, 0.15);
+  --color-amber:       #ffb300;
+  --color-amber-dim:   rgba(255, 179, 0, 0.15);
+  --color-danger:      #ff4d6d;
+
+  /* Sombras Neumórficas escuras */
+  --neu-shadow:
+    6px  6px 12px #0c1017,
+    -6px -6px 12px #1c242e;
+  --neu-shadow-sm:
+    3px  3px  8px #0c1017,
+    -3px -3px  8px #1c242e;
+  --neu-shadow-inset:
+    inset  4px  4px  8px #0c1017,
+    inset -4px -4px  8px #1c242e;
+  --neu-shadow-hover:
+    10px  10px 20px #090e14,
+    -10px -10px 20px #1f2a36;
+  --neu-shadow-active:
+    inset  5px  5px 10px #0c1017,
+    inset -5px -5px 10px #1c242e;
+
+  /* Bordas */
+  --color-border:      rgba(255, 255, 255, 0.06);
+  --color-border-focus: var(--color-cyan);
+
+  /* Glows */
+  --glow-cyan:  0 0 18px rgba(0, 229, 255, 0.50);
+  --glow-amber: 0 0 18px rgba(255, 179, 0,   0.48);
+  --glow-card:  0 0 32px rgba(0, 229, 255, 0.10);
+
+  /* Gradiente de fundo */
+  --bg-radial:
+    radial-gradient(ellipse 900px 600px at -5% -8%, rgba(0, 229, 255, 0.07) 0%, transparent 60%),
+    radial-gradient(ellipse 700px 500px at 106% 8%, rgba(255, 179, 0, 0.06) 0%, transparent 60%);
+}
+
+/* ─── LIGHT ─────────────────────────────────────── */
+body.light-theme {
+  /* Superfícies */
+  --color-bg:          #e8ecf2;
+  --color-panel:       #edf1f7;
+  --color-panel-hover: #f0f4fa;
+
+  /* Texto */
+  --color-text:        #1a2230;
+  --color-text-muted:  #5a6a80;
+  --color-text-subtle: #a0aab8;
+
+  /* Destaques (levemente mais escuros para contraste no claro) */
+  --color-cyan:        #008fa8;
+  --color-cyan-dim:    rgba(0, 143, 168, 0.12);
+  --color-amber:       #c97800;
+  --color-amber-dim:   rgba(201, 120, 0, 0.12);
+  --color-danger:      #d63050;
+
+  /* Sombras Neumórficas claras */
+  --neu-shadow:
+    6px  6px 12px #c8cdd5,
+    -6px -6px 12px #ffffff;
+  --neu-shadow-sm:
+    3px  3px  8px #c8cdd5,
+    -3px -3px  8px #ffffff;
+  --neu-shadow-inset:
+    inset  4px  4px  8px #c8cdd5,
+    inset -4px -4px  8px #ffffff;
+  --neu-shadow-hover:
+    10px  10px 20px #bcc2cc,
+    -10px -10px 20px #ffffff;
+  --neu-shadow-active:
+    inset  5px  5px 10px #c8cdd5,
+    inset -5px -5px 10px #ffffff;
+
+  /* Bordas */
+  --color-border:       rgba(0, 0, 0, 0.07);
+  --color-border-focus: var(--color-cyan);
+
+  /* Glows */
+  --glow-cyan:  0 0 16px rgba(0, 143, 168, 0.35);
+  --glow-amber: 0 0 16px rgba(201, 120, 0,   0.35);
+  --glow-card:  0 0 28px rgba(0, 143, 168, 0.08);
+
+  /* Gradiente de fundo */
+  --bg-radial:
+    radial-gradient(ellipse 900px 600px at -5% -8%, rgba(0, 143, 168, 0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 700px 500px at 106% 8%, rgba(201, 120, 0, 0.05) 0%, transparent 60%);
+}
