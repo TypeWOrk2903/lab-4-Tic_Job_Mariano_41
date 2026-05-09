@@ -3,104 +3,107 @@
    Aplicado como classe no <body>: dark-theme / light-theme
    ===================================================== */
 
-/* ─── DARK (padrão) ──────────────────────────────── */
+/* ─── DARK – Preto + Roxo ────────────────────────── */
 body.dark-theme {
   /* Superfícies */
-  --color-bg:          #141a21;
-  --color-panel:       #1a2230;
-  --color-panel-hover: #1e2838;
+  --color-bg:          #0a0a0f;
+  --color-panel:       #111118;
+  --color-panel-hover: #18181f;
 
   /* Texto */
-  --color-text:        #e8edf4;
-  --color-text-muted:  #7a8a9e;
-  --color-text-subtle: #3d4f62;
+  --color-text:        #f0eaff;
+  --color-text-muted:  #8878aa;
+  --color-text-subtle: #3d3560;
 
   /* Destaques */
-  --color-cyan:        #00e5ff;
-  --color-cyan-dim:    rgba(0, 229, 255, 0.15);
-  --color-amber:       #ffb300;
-  --color-amber-dim:   rgba(255, 179, 0, 0.15);
-  --color-danger:      #ff4d6d;
+  --color-cyan:        #c084fc;   /* roxo vivo – destaque primário  */
+  --color-cyan-dim:    rgba(192, 132, 252, 0.15);
+  --color-amber:       #a855f7;   /* roxo mais escuro – secundário  */
+  --color-amber-dim:   rgba(168, 85, 247, 0.15);
+  --color-danger:      #f43f5e;
 
-  /* Sombras Neumórficas escuras */
+  /* Sombras Neumórficas escuras (quase preto) */
   --neu-shadow:
-    6px  6px 12px #0c1017,
-    -6px -6px 12px #1c242e;
+    6px  6px 14px #050507,
+    -6px -6px 14px #171720;
   --neu-shadow-sm:
-    3px  3px  8px #0c1017,
-    -3px -3px  8px #1c242e;
+    3px  3px  8px #050507,
+    -3px -3px  8px #171720;
   --neu-shadow-inset:
-    inset  4px  4px  8px #0c1017,
-    inset -4px -4px  8px #1c242e;
+    inset  4px  4px  8px #050507,
+    inset -4px -4px  8px #171720;
   --neu-shadow-hover:
-    10px  10px 20px #090e14,
-    -10px -10px 20px #1f2a36;
+    10px  10px 22px #030304,
+    -10px -10px 22px #1c1c28;
   --neu-shadow-active:
-    inset  5px  5px 10px #0c1017,
-    inset -5px -5px 10px #1c242e;
+    inset  5px  5px 11px #050507,
+    inset -5px -5px 11px #171720;
 
   /* Bordas */
-  --color-border:      rgba(255, 255, 255, 0.06);
+  --color-border:       rgba(192, 132, 252, 0.10);
   --color-border-focus: var(--color-cyan);
 
-  /* Glows */
-  --glow-cyan:  0 0 18px rgba(0, 229, 255, 0.50);
-  --glow-amber: 0 0 18px rgba(255, 179, 0,   0.48);
-  --glow-card:  0 0 32px rgba(0, 229, 255, 0.10);
+  /* Glows roxos */
+  --glow-cyan:  0 0 22px rgba(192, 132, 252, 0.55);
+  --glow-amber: 0 0 22px rgba(168,  85, 247, 0.50);
+  --glow-card:  0 0 36px rgba(192, 132, 252, 0.12);
 
-  /* Gradiente de fundo */
+  /* Gradiente de fundo: preto → roxo nas bordas */
   --bg-radial:
-    radial-gradient(ellipse 900px 600px at -5% -8%, rgba(0, 229, 255, 0.07) 0%, transparent 60%),
-    radial-gradient(ellipse 700px 500px at 106% 8%, rgba(255, 179, 0, 0.06) 0%, transparent 60%);
+    radial-gradient(ellipse 1000px 700px at -8%  -6%, rgba(139,  92, 246, 0.18) 0%, transparent 55%),
+    radial-gradient(ellipse  800px 600px at 108% 10%, rgba(192, 132, 252, 0.13) 0%, transparent 55%),
+    radial-gradient(ellipse  600px 500px at 50% 110%, rgba(109,  40, 217, 0.10) 0%, transparent 50%);
 }
 
-/* ─── LIGHT ─────────────────────────────────────── */
+/* ─── LIGHT – Roxo + Branco + Azul ──────────────── */
 body.light-theme {
   /* Superfícies */
-  --color-bg:          #e8ecf2;
-  --color-panel:       #edf1f7;
-  --color-panel-hover: #f0f4fa;
+  --color-bg:          #f5f3ff;
+  --color-panel:       #fafaff;
+  --color-panel-hover: #ffffff;
 
   /* Texto */
-  --color-text:        #1a2230;
-  --color-text-muted:  #5a6a80;
-  --color-text-subtle: #a0aab8;
+  --color-text:        #1e1040;
+  --color-text-muted:  #6d5fa8;
+  --color-text-subtle: #b8aed4;
 
-  /* Destaques (levemente mais escuros para contraste no claro) */
-  --color-cyan:        #008fa8;
-  --color-cyan-dim:    rgba(0, 143, 168, 0.12);
-  --color-amber:       #c97800;
-  --color-amber-dim:   rgba(201, 120, 0, 0.12);
-  --color-danger:      #d63050;
+  /* Destaques */
+  --color-cyan:        #7c3aed;   /* violeta forte */
+  --color-cyan-dim:    rgba(124, 58, 237, 0.10);
+  --color-amber:       #2563eb;   /* azul moderno */
+  --color-amber-dim:   rgba(37, 99, 235, 0.10);
+  --color-danger:      #e11d48;
 
-  /* Sombras Neumórficas claras */
+  /* Sombras Neumórficas claras (base levemente lilás) */
   --neu-shadow:
-    6px  6px 12px #c8cdd5,
-    -6px -6px 12px #ffffff;
+    6px  6px 14px #d6d0f0,
+    -6px -6px 14px #ffffff;
   --neu-shadow-sm:
-    3px  3px  8px #c8cdd5,
+    3px  3px  8px #d6d0f0,
     -3px -3px  8px #ffffff;
   --neu-shadow-inset:
-    inset  4px  4px  8px #c8cdd5,
+    inset  4px  4px  8px #d6d0f0,
     inset -4px -4px  8px #ffffff;
   --neu-shadow-hover:
-    10px  10px 20px #bcc2cc,
-    -10px -10px 20px #ffffff;
+    10px  10px 22px #c8c0e8,
+    -10px -10px 22px #ffffff;
   --neu-shadow-active:
-    inset  5px  5px 10px #c8cdd5,
-    inset -5px -5px 10px #ffffff;
+    inset  5px  5px 11px #d6d0f0,
+    inset -5px -5px 11px #ffffff;
 
   /* Bordas */
-  --color-border:       rgba(0, 0, 0, 0.07);
+  --color-border:       rgba(124, 58, 237, 0.10);
   --color-border-focus: var(--color-cyan);
 
   /* Glows */
-  --glow-cyan:  0 0 16px rgba(0, 143, 168, 0.35);
-  --glow-amber: 0 0 16px rgba(201, 120, 0,   0.35);
-  --glow-card:  0 0 28px rgba(0, 143, 168, 0.08);
+  --glow-cyan:  0 0 20px rgba(124,  58, 237, 0.38);
+  --glow-amber: 0 0 20px rgba( 37,  99, 235, 0.35);
+  --glow-card:  0 0 30px rgba(124,  58, 237, 0.08);
 
-  /* Gradiente de fundo */
+  /* Gradiente de fundo: branco-lilás com toque azul */
   --bg-radial:
-    radial-gradient(ellipse 900px 600px at -5% -8%, rgba(0, 143, 168, 0.06) 0%, transparent 60%),
-    radial-gradient(ellipse 700px 500px at 106% 8%, rgba(201, 120, 0, 0.05) 0%, transparent 60%);
+    radial-gradient(ellipse 900px 600px at  0%   0%, rgba(167, 139, 250, 0.22) 0%, transparent 55%),
+    radial-gradient(ellipse 700px 500px at 100% 100%, rgba( 96, 165, 250, 0.18) 0%, transparent 55%),
+    radial-gradient(ellipse 600px 400px at  50%  50%, rgba(255, 255, 255, 0.60) 0%, transparent 70%);
 }
+

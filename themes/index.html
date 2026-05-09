@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="WebMovies – Descubra e avalie os melhores filmes." />
+  <title>WebMovies</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['"Oswald"', 'sans-serif'],
+            sans:    ['"Outfit"', 'sans-serif'],
+          },
+          colors: {
+            'wm-bg':    'var(--color-bg)',
+            'wm-panel': 'var(--color-panel)',
+            'wm-text':  'var(--color-text)',
+            'wm-muted': 'var(--color-text-muted)',
+            'wm-cyan':  'var(--color-cyan)',
+            'wm-amber': 'var(--color-amber)',
+          },
+          boxShadow: {
+            'neu':        'var(--neu-shadow)',
+            'neu-sm':     'var(--neu-shadow-sm)',
+            'neu-hover':  'var(--neu-shadow-hover)',
+            'neu-inset':  'var(--neu-shadow-inset)',
+            'neu-active': 'var(--neu-shadow-active)',
+            'glow-cyan':  'var(--glow-cyan)',
+            'glow-amber': 'var(--glow-amber)',
+          },
+        }
+      }
+    }
+  </script>
+
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Outfit:wght@300;400;600;700&display=swap"
+        rel="stylesheet" />
+
+  <!-- Tokens neumórficos (CSS custom properties) -->
+  <link rel="stylesheet" href="assets/css/variables.css" />
+  <link rel="stylesheet" href="assets/css/themes.css" />
+  <link rel="stylesheet" href="assets/css/main.css" />
+</head>
+<body class="light-theme font-sans min-h-screen">
+
+  <!-- ═══════════ HEADER ═══════════ -->
+  <header class="sticky top-0 z-50 grid grid-cols-[auto_1fr_auto] items-center
+                 gap-4 px-4 sm:px-6 py-3 backdrop-blur-md border-b wm-header-bg"
+          style="border-color: var(--color-border)" role="banner">
+
+    <a href="/" aria-label="WebMovies – página inicial"
+       class="flex font-display text-lg sm:text-xl font-bold tracking-wider select-none shrink-0">
+      <span style="color: var(--color-text)">Web</span>
+      <span style="color: var(--color-cyan)">Movies</span>
+    </a>
+
+    <label class="relative flex items-center w-full max-w-lg mx-auto" for="wm-search">
+      <i class="fa-solid fa-magnifying-glass absolute left-3 text-xs pointer-events-none"
+         style="color: var(--color-text-muted)" aria-hidden="true"></i>
+      <input
+        id="wm-search"
+        class="wm-search w-full pl-9 pr-4 py-2 rounded-full text-sm outline-none transition-shadow duration-200"
+        type="search"
+        placeholder="Buscar filmes…"
+        autocomplete="off"
+        spellcheck="false"
+        aria-label="Buscar filmes"
+        style="background: var(--color-panel); color: var(--color-text);
+               border: 1.5px solid transparent; box-shadow: var(--neu-shadow-sm)"
+      />
+    </label>
+
+    <button type="button"
+            class="wm-theme-btn w-10 h-10 rounded-full flex items-center justify-center
+                   text-base cursor-pointer border-none shrink-0 transition-all duration-200"
+            style="background: var(--color-panel); color: var(--color-text); box-shadow: var(--neu-shadow-sm)"
+            aria-label="Alternar tema claro/escuro">
+      <!-- injetado pelo theme.js (Font Awesome) -->
+    </button>
+  </header>
+
+
+  <!-- ═══════════ HERO ═══════════ -->
+  <section class="relative min-h-[70vh] flex items-end overflow-hidden"
+           aria-label="Filme em destaque">
+
+    <img class="wm-hero__bg absolute inset-0 w-full h-full object-cover"
+         style="opacity:.35" src="" alt="" aria-hidden="true" />
+    <div class="absolute inset-0"
+         style="background: linear-gradient(to top, var(--color-bg) 10%, rgba(0,0,0,0.25) 50%, transparent 80%)">
+    </div>
+
+    <div class="relative z-10 max-w-2xl px-5 sm:px-8 py-16 md:py-24">
+
+      <span class="inline-flex items-center gap-1.5 text-[0.65rem] font-bold tracking-[0.18em]
+                   uppercase px-3 py-1.5 rounded-full mb-4"
+            style="background: var(--color-cyan-dim); color: var(--color-cyan)">
+        <i class="fa-solid fa-fire-flame-curved"></i> EM DESTAQUE
+      </span>
+
+      <h1 class="wm-hero__title font-display text-4xl sm:text-5xl md:text-6xl font-bold leading-tight mb-4"
+          style="color: var(--color-text)">Carregando…</h1>
+
+      <p class="wm-hero__synopsis text-sm sm:text-base leading-relaxed mb-8 max-w-xl line-clamp-3"
+         style="color: var(--color-text-muted)"></p>
+
+      <div class="flex flex-wrap gap-3">
+
+        <button type="button"
+                class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full
+                       text-[0.75rem] font-bold tracking-[0.1em] uppercase cursor-pointer border-none
+                       hover:brightness-110 active:scale-95 transition-all duration-150"
+                style="background: var(--color-cyan); color: #fff; box-shadow: var(--glow-cyan)">
+          <i class="fa-solid fa-play"></i> ASSISTIR AGORA
+        </button>
+
+        <button type="button"
+                class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full
+                       text-[0.75rem] font-bold tracking-[0.1em] uppercase cursor-pointer border-none
+                       hover:brightness-110 active:scale-95 transition-all duration-150"
+                style="background: var(--color-amber); color: #fff; box-shadow: var(--glow-amber)">
+          <i class="fa-solid fa-star"></i> AVALIAR
+        </button>
+
+        <button type="button"
+                class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full
+                       text-[0.75rem] font-bold tracking-[0.1em] uppercase cursor-pointer border-none
+                       hover:shadow-neu-hover active:scale-95 transition-all duration-200"
+                style="background: var(--color-panel); color: var(--color-text); box-shadow: var(--neu-shadow)">
+          <i class="fa-solid fa-circle-info"></i> SAIBA MAIS
+        </button>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════ MAIN ═══════════ -->
+  <main class="max-w-screen-xl mx-auto px-4 sm:px-6 py-10" id="main-content">
+
+    <!-- Populares -->
+    <section class="mb-14" aria-labelledby="section-popular">
+      <div class="flex items-center gap-3 mb-6">
+        <i class="fa-solid fa-fire text-xl" style="color: var(--color-amber)"></i>
+        <h2 class="font-display text-xl sm:text-2xl font-bold tracking-wide"
+            style="color: var(--color-text)" id="section-popular">
+          POPULARES <span style="color: var(--color-cyan)">NO YTS</span>
+        </h2>
+      </div>
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4"
+           data-grid="popular" aria-live="polite" aria-label="Filmes populares"></div>
+    </section>
+
+    <!-- Em alta -->
+    <section class="mb-14" aria-labelledby="section-trending">
+      <div class="flex items-center gap-3 mb-6">
+        <i class="fa-solid fa-chart-line text-xl" style="color: var(--color-cyan)"></i>
+        <h2 class="font-display text-xl sm:text-2xl font-bold tracking-wide"
+            style="color: var(--color-text)" id="section-trending">
+          EM ALTA <span style="color: var(--color-amber)">ESTA SEMANA</span>
+        </h2>
+      </div>
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4"
+           data-grid="recommended" aria-live="polite" aria-label="Filmes em alta"></div>
+    </section>
+
+  </main>
+
+
+  <!-- TOAST -->
+  <div id="wm-toast"
+       class="fixed bottom-6 left-1/2 z-[9999] px-5 py-2.5 rounded-full text-sm font-semibold
+              whitespace-nowrap -translate-x-1/2 translate-y-4 opacity-0 pointer-events-none
+              transition-all duration-300"
+       style="background: var(--color-panel); color: var(--color-text); box-shadow: var(--neu-shadow)"
+       role="status" aria-live="assertive" aria-atomic="true"></div>
+
+  <script type="module" src="assets/js/app.js"></script>
+</body>
+</html>

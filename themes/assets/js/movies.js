@@ -1,15 +1,167 @@
 /**
- * WebMovies – TMDB API + DOM Renderer
- * Fetch API puro, sem bibliotecas externas.
- *
- * IMPORTANTE: substitua a constante API_KEY pela sua chave pessoal do TMDB.
- * Obtenha gratuitamente em: https://www.themoviedb.org/settings/api
+ * WebMovies – YTS.mx API + DOM Renderer
+ * API 100% gratuita, sem necessidade de chave de acesso.
+ * Docs: https://yts.mx/api
  */
 
-const API_KEY  = 'SUA_CHAVE_TMDB_AQUI';   // ← coloque aqui
-const BASE_URL = 'https://api.themoviedb.org/3';
-const IMG_BASE = 'https://image.tmdb.org/t/p/w500';
-const LANG     = 'pt-BR';
+const API_BASE       = 'http://www.omdbapi.com/?i=tt3896198&apikey=d1e10648';
+const FALLBACK_POSTER = 'assets/images/no-poster.svg';
+
+/* ─── Fetch genérico ──────────────────────────── */
+async function apiFetch(params = {}) {
+  const url = new URL(`${API_BASE}/list_movies.json`);
+  Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
+
+  const res = await fetch(url.toString());
+  if (!res.ok) throw new Error(`omdbapi ${res.status}: ${res.statusText}`);
+
+  const json = await res.json();
+  if (json.status !== 'ok') throw new Error(json.status_message ?? 'Erro na API YTS');
+
+  return json.data.movies ?? [];
+}
+
+/* ─── Toast ───────────────────────────────────── */
+function showToast(message, type = 'info') {
+  const toast = document.getElementById('wm-toast');
+  if (!toast) return;
+
+  toast.textContent = message;
+  toast.style.color = type === 'error' ? 'var(--color-danger, #ff4d6d)' : '';
+
+  toast.classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none');
+  toast.classList.add('opacity-100', 'translate-y-0');
+
+  clearTimeout(toast._timer);
+  toast._timer = setTimeout(() => {
+    toast.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
+    toast.classList.remove('opacity-100', 'translate-y-0');
+    toast.style.color = '';
+  }, 3400);
+}
+
+/* ─── Skeletons ───────────────────────────────── */
+function renderSkeletons(container, count = 10) {
+  container.innerHTML = Array.from({ length: count })
+    .map(() => `<div class="wm-skeleton"><div class="wm-skeleton__inner"></div></div>`)
+    .join('');
+}
+
+/* ─── Card builder ────────────────────────────── */
+function buildCard(movie) {
+  const poster = movie.medium_cover_image || FALLBACK_POSTER;
+  const rating = movie.rating ? movie.rating.toFixed(1) : '—';
+  const title  = movie.title  || 'Sem título';
+  const year   = movie.year   || '';
+  const genre  = movie.genres?.[0] ?? '';
+
+  const article = document.createElement('article');
+  article.className = 'wm-card';
+  article.setAttribute('aria-label', title);
+  article.dataset.movieId = movie.id;
+
+  article.innerHTML = `
+    <div class="wm-card__poster">
+      <img src="${poster}" alt="${title}" loading="lazy" />
+      <div class="wm-card__overlay"></div>
+      <span class="wm-card__badge">
+        <i class="fa-solid fa-star" aria-hidden="true"></i> ${rating}
+      </span>
+    </div>
+    <div class="wm-card__body">
+      <h3 class="wm-card__title">${title}</h3>
+      <p class="wm-card__genres">${genre}${genre && year ? ' · ' : ''}${year}</p>
+    </div>`;
+
+  return article;
+}
+
+/* ─── Render list ─────────────────────────────── */
+function renderMovies(container, movies) {
+  if (!movies.length) {
+    container.innerHTML = `
+      <div class="wm-state">
+        <i class="fa-regular fa-face-frown" aria-hidden="true"></i>
+        <p>Nenhum filme encontrado.</p>
+      </div>`;
+    return;
+  }
+  container.innerHTML = '';
+  movies.forEach(m => container.appendChild(buildCard(m)));
+}
+
+/* ─── Hero ────────────────────────────────────── */
+function updateHero(movie) {
+  if (!movie) return;
+  const bg    = document.querySelector('.wm-hero__bg');
+  const title = document.querySelector('.wm-hero__title');
+  const syn   = document.querySelector('.wm-hero__synopsis');
+
+  if (bg) { bg.src = movie.background_image_original || movie.background_image || ''; bg.alt = movie.title || ''; }
+  if (title) title.textContent = movie.title || '';
+  if (syn)   syn.textContent   = movie.summary || '';
+}
+
+/* ─── Busca com debounce ──────────────────────── */
+export function initSearch() {
+  const input = document.getElementById('wm-search');
+  if (!input) return;
+
+  let timer;
+  input.addEventListener('input', () => {
+    clearTimeout(timer);
+    const q = input.value.trim();
+    if (!q) { loadSections(); return; }
+
+    timer = setTimeout(async () => {
+      const grid = document.querySelector('[data-grid="popular"]');
+      const recSection = document.querySelector('[data-grid="recommended"]')?.closest('section');
+      if (grid) renderSkeletons(grid, 10);
+      if (recSection) recSection.style.display = 'none';
+
+      try {
+        const movies = await apiFetch({ query_term: q, limit: 20 });
+        if (grid) renderMovies(grid, movies);
+      } catch (e) {
+        showToast('Erro na busca: ' + e.message, 'error');
+        if (grid) renderMovies(grid, []);
+      }
+    }, 420);
+  });
+
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { input.value = ''; loadSections(); }
+  });
+}
+
+/* ─── Carrega seções ──────────────────────────── */
+export async function loadSections() {
+  const popularGrid     = document.querySelector('[data-grid="popular"]');
+  const recommendedGrid = document.querySelector('[data-grid="recommended"]');
+  const recSection      = recommendedGrid?.closest('section');
+
+  if (recSection) recSection.style.display = '';
+  if (popularGrid)     renderSkeletons(popularGrid, 10);
+  if (recommendedGrid) renderSkeletons(recommendedGrid, 10);
+
+  try {
+    const [popular, trending] = await Promise.all([
+      apiFetch({ sort_by: 'rating',         limit: 20, minimum_rating: 7 }),
+      apiFetch({ sort_by: 'download_count', limit: 20 }),
+    ]);
+
+    if (popularGrid)     renderMovies(popularGrid,     popular);
+    if (recommendedGrid) renderMovies(recommendedGrid, trending);
+
+    updateHero(popular?.[0]);
+  } catch (e) {
+    console.error('[WebMovies]', e);
+    showToast('Erro ao carregar filmes: ' + e.message, 'error');
+    if (popularGrid)     renderMovies(popularGrid,     []);
+    if (recommendedGrid) renderMovies(recommendedGrid, []);
+  }
+}
+
 
 /* ─── Helpers de fetch ─────────────────────────── */
 async function apiFetch(endpoint, params = {}) {
