@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="WebMovies – Descubra e avalie os melhores filmes." />
-  <title>WebMovies</title>
+  <title><?=$head["title"]?></title>
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -50,11 +50,11 @@
         rel="stylesheet" />
 
   <!-- Tokens neumórficos (CSS custom properties) -->
-  <link rel="stylesheet" href="assets/css/variables.css" />
-  <link rel="stylesheet" href="assets/css/themes.css" />
-  <link rel="stylesheet" href="assets/css/main.css" />
+  <link rel="stylesheet" href="<?=url_asset("css/variables.css")?>" />
+  <link rel="stylesheet" href="<?=url_asset("css/themes.css")?>" />
+  <link rel="stylesheet" href="<?=url_asset("css/main.css") ?>" />
 </head>
-<body class="light-theme font-sans min-h-screen">
+<body class="dark-theme font-sans min-h-screen">
 
   <!-- ═══════════ HEADER ═══════════ -->
   <header class="sticky top-0 z-50 grid grid-cols-[auto_1fr_auto] items-center
@@ -157,7 +157,7 @@
         <i class="fa-solid fa-fire text-xl" style="color: var(--color-amber)"></i>
         <h2 class="font-display text-xl sm:text-2xl font-bold tracking-wide"
             style="color: var(--color-text)" id="section-popular">
-          POPULARES <span style="color: var(--color-cyan)">NO YTS</span>
+          POPULARES <span style="color: var(--color-cyan)">NO WEBMOVIES</span>
         </h2>
       </div>
       <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4"
@@ -188,6 +188,6 @@
        style="background: var(--color-panel); color: var(--color-text); box-shadow: var(--neu-shadow)"
        role="status" aria-live="assertive" aria-atomic="true"></div>
 
-  <script type="module" src="assets/js/app.js"></script>
+  <script type="module" src="<?= url_asset("js/app.js") ?>"></script>
 </body>
 </html>
