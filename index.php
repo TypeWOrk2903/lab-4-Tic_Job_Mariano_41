@@ -9,7 +9,7 @@ use WebMovies\Support\Request;
 use WebMovies\Support\Router;
 
 $request = Request::fromGlobals();
-$router = new Router();
+$router  = new Router();
 
 $router->get('/', [HomeController::class, 'index']);
 
