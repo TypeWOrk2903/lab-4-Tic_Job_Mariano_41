@@ -10,11 +10,13 @@ final class HomeController
 {
     public function index(Request $request): void
     {
-        http_response_code(200);
-        header('Content-Type: text/html; charset=UTF-8');
+       $head = [
+            "title" => "Home | " . CONF_SITE_NAME,
+            "description" => "Assista aos melhores filmes no WebMovies"
+        ];
 
-        echo '<h1>WebMovies</h1>';
-        echo '<p>Projeto configurado com Composer, rotas e namespaces.</p>';
-        echo '<small>Rota atual: ' . htmlspecialchars($request->path(), ENT_QUOTES, 'UTF-8') . '</small>';
+        // Conecta com o HTML na pasta themes usando a constante que criamos
+        // O include faz o PHP "renderizar" o arquivo themes/index.php
+        require CONF_VIEW_PATH . "/dashboard.php";
     }
 }
