@@ -1,0 +1,6 @@
+RewriteEngine On
+
+# Direciona tudo para o front controller, mantendo arquivos reais acessiveis
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [QSA,L]

@@ -1,0 +1,19 @@
+{
+  "name": "webmovies/app",
+  "description": "Estrutura base do projeto WebMovies com rotas e namespaces",
+  "type": "project",
+  "require": {
+    "php": ">=8.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "WebMovies\\Controllers\\": "source/Controllers/",
+      "WebMovies\\Models\\": "source/models/",
+      "WebMovies\\Support\\": "source/support/"
+    }
+  },
+  "config": {
+    "optimize-autoloader": true,
+    "sort-packages": true
+  }
+}
