@@ -93,7 +93,7 @@
                    class="w-full pl-9 pr-4 py-2.5 rounded-lg text-sm outline-none transition-shadow duration-200"
                    style="background:var(--color-bg);color:var(--color-text);
                           border:1.5px solid var(--color-border);box-shadow:var(--neu-shadow-inset)"
-                   placeholder="Mínimo 8 caracteres" />
+                   placeholder="Min. 8 chars, A-Z, a-z, 0-9" />
           </div>
         </div>
 

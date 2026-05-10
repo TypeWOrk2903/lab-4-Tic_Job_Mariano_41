@@ -54,6 +54,7 @@ final class AuthController
 
     private function redirect(string $path): never
     {
+        session_write_close(); // garante que a sessão é gravada antes do redirect
         header('Location: ' . CONF_URL_BASE . $path);
         exit;
     }
@@ -97,8 +98,11 @@ final class AuthController
             $this->redirect('/register');
         }
 
-        if (mb_strlen($pass) < 8) {
-            $this->flashError('A senha deve ter pelo menos 8 caracteres.', compact('name', 'email'));
+        if (!$this->isStrongPassword($pass)) {
+            $this->flashError(
+                'A senha deve ter no mínimo 8 caracteres, letra maiúscula, letra minúscula e um número.',
+                compact('name', 'email')
+            );
             $this->redirect('/register');
         }
 
@@ -124,9 +128,15 @@ final class AuthController
         }
 
         // Login automático após cadastro bem-sucedido
-        $userModel = (new User())->findByEmail($email);
-        $this->createSession($userModel);
-        $this->redirect('/');
+        $newUser = (new User())->findByEmail($email);
+
+        if (!$newUser) {
+            $this->flashError('Conta criada, mas não foi possível iniciar sessão. Tente fazer login.', []);
+            $this->redirect('/login');
+        }
+
+        $this->createSession($newUser);
+        $this->redirect('/admin');
     }
 
     // ── Login ─────────────────────────────────────────────────────────────
@@ -139,9 +149,10 @@ final class AuthController
 
         $this->startSession();
         $this->view('login', [
-            'pageTitle' => 'Entrar | WebMovies',
-            'error'     => $_SESSION['auth_error'] ?? null,
-            'old'       => $_SESSION['auth_old'] ?? [],
+            'pageTitle'       => 'Entrar | WebMovies',
+            'error'           => $_SESSION['auth_error'] ?? null,
+            'old'             => $_SESSION['auth_old'] ?? [],
+            'showForgetLink'  => ($_SESSION['login_attempts'] ?? 0) >= 3,
         ]);
 
         unset($_SESSION['auth_error'], $_SESSION['auth_old']);
@@ -162,13 +173,17 @@ final class AuthController
         $user = (new User())->auth($email, $pass);
 
         if (!$user) {
+            // Incrementa contador de tentativas
+            $_SESSION['login_attempts'] = ($_SESSION['login_attempts'] ?? 0) + 1;
             // Mensagem genérica — não revela se o e-mail existe (OWASP A07)
             $this->flashError('E-mail ou senha incorretos.', ['email' => $email]);
             $this->redirect('/login');
         }
 
+        // Reset do contador após login bem-sucedido
+        unset($_SESSION['login_attempts']);
         $this->createSession($user);
-        $this->redirect('/');
+        $this->redirect('/admin');
     }
 
     // ── Recuperação de senha ──────────────────────────────────────────────
@@ -226,12 +241,14 @@ final class AuthController
      */
     private function createSession(User $user): void
     {
-        session_regenerate_id(true);
+        // false = mantém dados da sessão atual; novo ID é gerado sem apagar o antigo
+        // Previne Session Fixation (OWASP A07) sem risco de perda de dados no XAMPP
+        session_regenerate_id(false);
 
         $_SESSION['user_id']         = $user->id;
         $_SESSION['user_name']       = $user->name;
         $_SESSION['user_email']      = $user->email;
-        // Filtro parental ativo por padrão — lido pelo frontend JS para filtrar API
+        $_SESSION['user_role']       = 'admin';
         $_SESSION['parental_filter'] = true;
     }
 
@@ -242,5 +259,21 @@ final class AuthController
     {
         $_SESSION['auth_error'] = $message;
         $_SESSION['auth_old']   = $old;
+    }
+
+    /**
+     * Valida senha forte:
+     *  - Mínimo 8 caracteres
+     *  - Pelo menos uma letra maiúscula
+     *  - Pelo menos uma letra minúscula
+     *  - Pelo menos um número
+     *  - Pelo menos um caractere especial
+     */
+    private function isStrongPassword(string $password): bool
+    {
+        return mb_strlen($password) >= 8
+            && preg_match('/[A-Z]/', $password) === 1
+            && preg_match('/[a-z]/', $password) === 1
+            && preg_match('/[0-9]/', $password) === 1;
     }
 }

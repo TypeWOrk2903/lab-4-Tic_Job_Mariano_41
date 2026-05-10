@@ -38,6 +38,7 @@ final class AdminController
         $this->startSession();
 
         if (empty($_SESSION['user_id']) || ($_SESSION['user_role'] ?? '') !== 'admin') {
+            session_write_close();
             header('Location: ' . CONF_URL_BASE . '/login');
             exit;
         }

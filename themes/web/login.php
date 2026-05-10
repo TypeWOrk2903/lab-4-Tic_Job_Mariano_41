@@ -1,4 +1,4 @@
-<?php /** @var string $pageTitle @var string|null $error */ ?>
+<?php /** @var string $pageTitle @var string|null $error @var array $old @var bool $showForgetLink */ ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -59,8 +59,17 @@
 
         <!-- Senha -->
         <div class="mb-6">
-          <label for="password" class="block text-xs font-semibold mb-1.5 tracking-wide uppercase"
-                 style="color:var(--color-text-muted)">Senha</label>
+          <div class="flex items-center justify-between mb-1.5">
+            <label for="password" class="block text-xs font-semibold tracking-wide uppercase"
+                   style="color:var(--color-text-muted)">Senha</label>
+            <?php if (!empty($showForgetLink)): ?>
+            <a href="<?= CONF_URL_BASE ?>/forget"
+               class="text-xs hover:underline"
+               style="color:var(--color-cyan)">
+              <i class="fa-solid fa-key fa-xs"></i> Esqueci a senha
+            </a>
+            <?php endif; ?>
+          </div>
           <div class="relative">
             <i class="fa-solid fa-lock absolute left-3 top-1/2 -translate-y-1/2 text-xs pointer-events-none"
                style="color:var(--color-text-muted)"></i>

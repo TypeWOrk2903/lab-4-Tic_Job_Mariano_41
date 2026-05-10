@@ -57,91 +57,118 @@
 
   </main>
 
-  <script type="module">
-    const API_KEY = 'd1e10648';
-    const BLOCKED = new Set(['NC-17','X','XXX','R','TV-MA']);
+ <script type="module">
+  // Configurações TMDB
+  const API_KEY  = 'SUA_CHAVE_TMDB_AQUI'; // Substitua pela sua chave TMDB
+  const BASE_URL = 'https://api.themoviedb.org/3';
+  const IMG_URL  = 'https://image.tmdb.org/t/p/w500';
+  const LANG     = 'pt-BR';
 
-    const root    = document.getElementById('movie-detail-root');
-    const imdbId  = root.dataset.imdb;
-    const content = document.getElementById('detail-content');
-    const skeleton= document.getElementById('detail-skeleton');
-    const errEl   = document.getElementById('detail-error');
+  const root     = document.getElementById('movie-detail-root');
+  const imdbId   = root.dataset.imdb; // ID do filme
+  const content  = document.getElementById('detail-content');
+  const skeleton = document.getElementById('detail-skeleton');
+  const errEl    = document.getElementById('detail-error');
 
-    async function load() {
-      if (!imdbId) { skeleton.hidden = true; errEl.classList.remove('hidden'); return; }
-
-      try {
-        const res  = await fetch(`https://www.omdbapi.com/?apikey=${API_KEY}&i=${encodeURIComponent(imdbId)}&plot=full`);
-        const data = await res.json();
-
-        if (data.Response === 'False' || BLOCKED.has(data.Rated)) {
-          throw new Error('Não disponível');
-        }
-
-        const poster = data.Poster && data.Poster !== 'N/A' ? data.Poster : '<?= CONF_URL_BASE ?>/themes/assets/images/no-poster.svg';
-        const rating = parseFloat(data.imdbRating) || 0;
-        const stars  = Math.round(rating / 2);
-
-        content.innerHTML = `
-          <img src="${poster}" alt="${data.Title}"
-               class="rounded-2xl shrink-0 w-48 md:w-60 aspect-[2/3] object-cover self-start"
-               style="box-shadow:var(--neu-shadow)" />
-          <div class="flex-1 pt-2 space-y-4">
-            <h1 class="font-display text-3xl sm:text-4xl font-bold leading-tight"
-                style="color:var(--color-text)">${data.Title} <span class="text-lg font-normal" style="color:var(--color-text-muted)">(${data.Year})</span></h1>
-
-            <div class="flex flex-wrap gap-2 text-xs">
-              ${(data.Genre ?? '').split(',').map(g => `
-                <span class="px-3 py-1 rounded-full font-semibold"
-                      style="background:var(--color-cyan-dim);color:var(--color-cyan)">${g.trim()}</span>
-              `).join('')}
-            </div>
-
-            <div class="flex items-center gap-3">
-              <span class="text-2xl font-bold" style="color:var(--color-amber)">${rating.toFixed(1)}</span>
-              <span class="text-sm" style="color:var(--color-text-muted)">${'★'.repeat(stars)}${'☆'.repeat(5-stars)} IMDb</span>
-              <span class="text-xs px-2 py-0.5 rounded" style="background:var(--color-panel);color:var(--color-text-muted);box-shadow:var(--neu-shadow-sm)">${data.Rated ?? '—'}</span>
-            </div>
-
-            <p class="text-sm leading-relaxed" style="color:var(--color-text-muted)">${data.Plot ?? ''}</p>
-
-            <dl class="grid grid-cols-2 gap-3 text-xs">
-              ${[['Diretor', data.Director],['Elenco', data.Actors],['País', data.Country],['Idioma', data.Language],['Duração', data.Runtime]].map(([k,v]) => v && v !== 'N/A' ? `
-                <div class="rounded-xl p-3" style="background:var(--color-panel);box-shadow:var(--neu-shadow-sm)">
-                  <dt class="font-bold uppercase tracking-wide mb-0.5" style="color:var(--color-cyan)">${k}</dt>
-                  <dd style="color:var(--color-text)">${v}</dd>
-                </div>` : '').join('')}
-            </dl>
-
-            <?php if ($isLoggedIn): ?>
-            <button type="button" id="fav-btn"
-                    class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm
-                           font-bold uppercase cursor-pointer border-none transition-all duration-150"
-                    style="background:var(--color-amber);color:#fff;box-shadow:var(--glow-amber)"
-                    data-imdb="${data.imdbID}">
-              <i class="fa-solid fa-heart"></i> Adicionar aos Favoritos
-            </button>
-            <?php else: ?>
-            <a href="<?= CONF_URL_BASE ?>/login"
-               class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm
-                      font-bold uppercase cursor-pointer border-none"
-               style="background:var(--color-panel);color:var(--color-text);box-shadow:var(--neu-shadow)">
-              <i class="fa-solid fa-heart"></i> Entre para Favoritar
-            </a>
-            <?php endif; ?>
-          </div>`;
-
-        document.title = `${data.Title} | WebMovies`;
-        skeleton.hidden = true;
-        content.classList.remove('hidden');
-        content.classList.add('flex');
-      } catch {
-        skeleton.hidden = true;
-        errEl.classList.remove('hidden');
-      }
+  async function load() {
+    if (!imdbId) { 
+      skeleton.classList.add('hidden'); 
+      errEl.classList.remove('hidden'); 
+      return; 
     }
 
-    load();
-  </script>
+    try {
+      // 1. Busca detalhes na TMDB (Usando o ID do filme ou buscando pelo imdb_id)
+      // Nota: Se o 'imdbId' que você passa for o ID da TMDB, use /movie/${id}. 
+      // Se for o ID do IMDb (ex: tt123), usamos o endpoint /find.
+      const response = await fetch(`${BASE_URL}/movie/${imdbId}?api_key=${API_KEY}&language=${LANG}&append_to_response=release_dates`);
+      const data = await response.json();
+
+      // 2. FILTRO DE SEGURANÇA (TMDB usa 'adult')
+      if (!data || data.adult === true || data.status_code === 34) {
+        throw new Error('Conteúdo não disponível ou restrito');
+      }
+
+      // 3. Preparação de dados
+      const poster = data.poster_path ? `${IMG_URL}${data.poster_path}` : '<?= CONF_URL_BASE ?>/themes/assets/images/no-poster.svg';
+      const rating = data.vote_average || 0;
+      const stars  = Math.round(rating / 2);
+      const year   = data.release_date ? data.release_date.split('-')[0] : 'N/A';
+
+      // 4. Injeção do HTML (Mantendo seu design original)
+      content.innerHTML = `
+        <img src="${poster}" alt="${data.title}"
+             class="rounded-2xl shrink-0 w-48 md:w-60 aspect-[2/3] object-cover self-start"
+             style="box-shadow:var(--neu-shadow)" />
+             
+        <div class="flex-1 pt-2 space-y-4">
+          <h1 class="font-display text-3xl sm:text-4xl font-bold leading-tight"
+              style="color:var(--color-text)">
+              ${data.title} 
+              <span class="text-lg font-normal" style="color:var(--color-text-muted)">(${year})</span>
+          </h1>
+
+          <div class="flex flex-wrap gap-2 text-xs">
+            ${(data.genres || []).map(g => `
+              <span class="px-3 py-1 rounded-full font-semibold"
+                    style="background:var(--color-cyan-dim);color:var(--color-cyan)">${g.name}</span>
+            `).join('')}
+          </div>
+
+          <div class="flex items-center gap-3">
+            <span class="text-2xl font-bold" style="color:var(--color-amber)">${rating.toFixed(1)}</span>
+            <span class="text-sm" style="color:var(--color-text-muted)">${'★'.repeat(stars)}${'☆'.repeat(5-stars)} TMDB</span>
+            <span class="text-xs px-2 py-0.5 rounded" style="background:var(--color-panel);color:var(--color-text-muted);box-shadow:var(--neu-shadow-sm)">
+                ${data.adult ? '+18' : 'Livre'}
+            </span>
+          </div>
+
+          <p class="text-sm leading-relaxed" style="color:var(--color-text-muted)">${data.overview || 'Sem descrição disponível.'}</p>
+
+          <dl class="grid grid-cols-2 gap-3 text-xs">
+            <div class="rounded-xl p-3" style="background:var(--color-panel);box-shadow:var(--neu-shadow-sm)">
+              <dt class="font-bold uppercase tracking-wide mb-0.5" style="color:var(--color-cyan)">Duração</dt>
+              <dd style="color:var(--color-text)">${data.runtime} min</dd>
+            </div>
+            <div class="rounded-xl p-3" style="background:var(--color-panel);box-shadow:var(--neu-shadow-sm)">
+              <dt class="font-bold uppercase tracking-wide mb-0.5" style="color:var(--color-cyan)">Idioma</dt>
+              <dd style="color:var(--color-text)">${data.original_language.toUpperCase()}</dd>
+            </div>
+            <div class="rounded-xl p-3" style="background:var(--color-panel);box-shadow:var(--neu-shadow-sm)">
+              <dt class="font-bold uppercase tracking-wide mb-0.5" style="color:var(--color-cyan)">Popularidade</dt>
+              <dd style="color:var(--color-text)">${Math.round(data.popularity)} pts</dd>
+            </div>
+          </dl>
+
+          <?php if ($isLoggedIn): ?>
+          <button type="button" id="fav-btn"
+                  class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-bold uppercase cursor-pointer border-none transition-all duration-150 active:scale-95"
+                  style="background:var(--color-amber);color:#fff;box-shadow:var(--glow-amber)"
+                  data-id="${data.id}">
+            <i class="fa-solid fa-heart"></i> Adicionar aos Favoritos
+          </button>
+          <?php else: ?>
+          <a href="<?= CONF_URL_BASE ?>/login"
+             class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-bold uppercase cursor-pointer border-none"
+             style="background:var(--color-panel);color:var(--color-text);box-shadow:var(--neu-shadow)">
+            <i class="fa-solid fa-heart"></i> Entre para Favoritar
+          </a>
+          <?php endif; ?>
+        </div>`;
+
+      document.title = `${data.title} | WebMovies`;
+      skeleton.classList.add('hidden');
+      content.classList.remove('hidden');
+      content.classList.add('flex');
+
+    } catch (error) {
+      console.error(error);
+      skeleton.classList.add('hidden');
+      errEl.classList.remove('hidden');
+    }
+  }
+
+  load();
+</script>
 </body>
 </html>

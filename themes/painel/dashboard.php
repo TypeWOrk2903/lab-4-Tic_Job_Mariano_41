@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="WebMovies – Descubra e avalie os melhores filmes." />
-  <title><?=$head["title"]?></title>
+  <title><?=$pageTitle?></title>
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -85,7 +85,7 @@
       />
     </label>
 
-    <!-- Col 3: Ações (idioma + tema) -->
+    <!-- Col 3: Ações (idioma + tema + utilizador) -->
     <div class="flex items-center gap-2 shrink-0">
 
       <!-- Idioma -->
@@ -101,8 +101,43 @@
                      text-base cursor-pointer border-none transition-all duration-200"
               style="background: var(--color-panel); color: var(--color-text); box-shadow: var(--neu-shadow-sm)"
               aria-label="Alternar tema claro/escuro">
-        <!-- injetado pelo theme.js (Font Awesome) -->
       </button>
+
+      <!-- Utilizador / Logout -->
+      <div class="relative group">
+        <button type="button"
+                class="flex items-center gap-2 px-3 py-2 rounded-full text-sm font-semibold
+                       cursor-pointer border-none transition-all duration-200"
+                style="background: var(--color-panel); color: var(--color-text); box-shadow: var(--neu-shadow-sm)"
+                aria-label="Menu do utilizador">
+          <i class="fa-solid fa-circle-user text-base" style="color: var(--color-cyan)"></i>
+          <span class="hidden sm:inline max-w-[120px] truncate"><?= htmlspecialchars($adminName ?? 'Admin') ?></span>
+          <i class="fa-solid fa-chevron-down text-[0.6rem]" style="color: var(--color-text-muted)"></i>
+        </button>
+
+        <!-- Dropdown -->
+        <div class="absolute right-0 top-full mt-2 w-44 rounded-xl py-1 z-50
+                    opacity-0 pointer-events-none group-focus-within:opacity-100 group-focus-within:pointer-events-auto
+                    group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-150"
+             style="background: var(--color-panel); box-shadow: var(--neu-shadow)">
+
+          <a href="<?= CONF_URL_BASE ?>/admin/settings"
+             class="flex items-center gap-2 px-4 py-2.5 text-sm hover:brightness-125 transition-all"
+             style="color: var(--color-text)">
+            <i class="fa-solid fa-gear w-4 text-center" style="color: var(--color-cyan)"></i>
+            Configurações
+          </a>
+
+          <div style="height:1px; background: var(--color-border); margin: 4px 12px"></div>
+
+          <a href="<?= CONF_URL_BASE ?>/logout"
+             class="flex items-center gap-2 px-4 py-2.5 text-sm hover:brightness-125 transition-all"
+             style="color: #f43f5e">
+            <i class="fa-solid fa-right-from-bracket w-4 text-center"></i>
+            Sair
+          </a>
+        </div>
+      </div>
 
     </div>
   </header>
