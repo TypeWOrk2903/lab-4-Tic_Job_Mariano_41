@@ -1,4 +1,4 @@
-<?php /** @var string $pageTitle @var string|null $error @var string|null $success @var array $old */ ?>
+<?php /** @var string $pageTitle @var string|null $error @var string|null $success */ ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="<?= CONF_URL_BASE ?>/themes/painel/assets/css/themes.css" />
   <link rel="stylesheet" href="<?= CONF_URL_BASE ?>/themes/painel/assets/css/main.css" />
 </head>
-<body class="dark-theme font-sans min-h-screen flex items-center justify-center px-4 py-10"
+<body class="dark-theme font-sans min-h-screen flex items-center justify-center px-4"
       style="background:var(--bg-radial),var(--color-bg)">
 
   <div class="w-full max-w-sm">
@@ -25,7 +25,7 @@
         <span style="color:var(--color-cyan)">Movies</span>
       </a>
       <p class="mt-2 text-sm" style="color:var(--color-text-muted)">
-        Crie sua conta e descubra filmes personalizados para você.
+        Informe seu e-mail e enviaremos as instruções de recuperação.
       </p>
     </div>
 
@@ -48,33 +48,17 @@
       </div>
       <?php endif; ?>
 
-      <form method="POST" action="<?= CONF_URL_BASE ?>/register" novalidate>
-
-        <!-- Nome -->
-        <div class="mb-4">
-          <label for="name" class="block text-xs font-semibold mb-1.5 tracking-wide uppercase"
-                 style="color:var(--color-text-muted)">Nome Completo</label>
-          <div class="relative">
-            <i class="fa-solid fa-user absolute left-3 top-1/2 -translate-y-1/2 text-xs pointer-events-none"
-               style="color:var(--color-text-muted)"></i>
-            <input id="name" name="name" type="text" required
-                   value="<?= htmlspecialchars($old['name'] ?? '') ?>"
-                   class="w-full pl-9 pr-4 py-2.5 rounded-lg text-sm outline-none transition-shadow duration-200"
-                   style="background:var(--color-bg);color:var(--color-text);
-                          border:1.5px solid var(--color-border);box-shadow:var(--neu-shadow-inset)"
-                   placeholder="Seu nome completo" />
-          </div>
-        </div>
+      <?php if (!$success): ?>
+      <form method="POST" action="<?= CONF_URL_BASE ?>/forget" novalidate>
 
         <!-- E-mail -->
-        <div class="mb-4">
+        <div class="mb-6">
           <label for="email" class="block text-xs font-semibold mb-1.5 tracking-wide uppercase"
-                 style="color:var(--color-text-muted)">E-mail</label>
+                 style="color:var(--color-text-muted)">E-mail cadastrado</label>
           <div class="relative">
             <i class="fa-solid fa-envelope absolute left-3 top-1/2 -translate-y-1/2 text-xs pointer-events-none"
                style="color:var(--color-text-muted)"></i>
             <input id="email" name="email" type="email" required
-                   value="<?= htmlspecialchars($old['email'] ?? '') ?>"
                    class="w-full pl-9 pr-4 py-2.5 rounded-lg text-sm outline-none transition-shadow duration-200"
                    style="background:var(--color-bg);color:var(--color-text);
                           border:1.5px solid var(--color-border);box-shadow:var(--neu-shadow-inset)"
@@ -82,50 +66,22 @@
           </div>
         </div>
 
-        <!-- Senha -->
-        <div class="mb-4">
-          <label for="password" class="block text-xs font-semibold mb-1.5 tracking-wide uppercase"
-                 style="color:var(--color-text-muted)">Senha</label>
-          <div class="relative">
-            <i class="fa-solid fa-lock absolute left-3 top-1/2 -translate-y-1/2 text-xs pointer-events-none"
-               style="color:var(--color-text-muted)"></i>
-            <input id="password" name="password" type="password" required minlength="8"
-                   class="w-full pl-9 pr-4 py-2.5 rounded-lg text-sm outline-none transition-shadow duration-200"
-                   style="background:var(--color-bg);color:var(--color-text);
-                          border:1.5px solid var(--color-border);box-shadow:var(--neu-shadow-inset)"
-                   placeholder="Mínimo 8 caracteres" />
-          </div>
-        </div>
-
-        <!-- Confirmar Senha -->
-        <div class="mb-6">
-          <label for="confirm" class="block text-xs font-semibold mb-1.5 tracking-wide uppercase"
-                 style="color:var(--color-text-muted)">Confirmar Senha</label>
-          <div class="relative">
-            <i class="fa-solid fa-lock-open absolute left-3 top-1/2 -translate-y-1/2 text-xs pointer-events-none"
-               style="color:var(--color-text-muted)"></i>
-            <input id="confirm" name="confirm" type="password" required minlength="8"
-                   class="w-full pl-9 pr-4 py-2.5 rounded-lg text-sm outline-none transition-shadow duration-200"
-                   style="background:var(--color-bg);color:var(--color-text);
-                          border:1.5px solid var(--color-border);box-shadow:var(--neu-shadow-inset)"
-                   placeholder="Repita a senha" />
-          </div>
-        </div>
-
         <button type="submit"
                 class="w-full py-2.5 rounded-full text-sm font-bold uppercase tracking-wider
                        cursor-pointer border-none hover:brightness-110 active:scale-95 transition-all duration-150"
                 style="background:var(--color-cyan);color:#fff;box-shadow:var(--glow-cyan)">
-          <i class="fa-solid fa-user-plus mr-1"></i> Criar Conta
+          <i class="fa-solid fa-paper-plane mr-1"></i> Enviar Instruções
         </button>
 
       </form>
+      <?php endif; ?>
+
     </div>
 
     <p class="text-center mt-6 text-xs" style="color:var(--color-text-muted)">
-      Já tem uma conta?
+      Lembrou a senha?
       <a href="<?= CONF_URL_BASE ?>/login" style="color:var(--color-cyan)" class="hover:underline font-semibold">
-        Entrar
+        Voltar ao login
       </a>
     </p>
     <p class="text-center mt-2">
@@ -136,7 +92,6 @@
   </div>
 
   <script>
-    // Aplica tema do localStorage sem flash
     const t = localStorage.getItem('wm-theme');
     if (t) { document.body.classList.remove('dark-theme','light-theme'); document.body.classList.add(t); }
   </script>

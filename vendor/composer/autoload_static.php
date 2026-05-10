@@ -6,11 +6,17 @@ namespace Composer\Autoload;
 
 class ComposerStaticInitc373c8cdef6849f6ead6819aa587a082
 {
+    public static $files = array (
+        '07cbd858d0ee16841c22d2d227fa1ee2' => __DIR__ . '/../..' . '/source/support/config.php',
+    );
+
     public static $prefixLengthsPsr4 = array (
         'W' => 
         array (
             'WebMovies\\Support\\' => 18,
             'WebMovies\\Models\\' => 17,
+            'WebMovies\\Controllers\\Web\\' => 26,
+            'WebMovies\\Controllers\\Admin\\' => 28,
             'WebMovies\\Controllers\\' => 22,
         ),
     );
@@ -24,6 +30,14 @@ class ComposerStaticInitc373c8cdef6849f6ead6819aa587a082
         array (
             0 => __DIR__ . '/../..' . '/source/models',
         ),
+        'WebMovies\\Controllers\\Web\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/source/Controllers/Web',
+        ),
+        'WebMovies\\Controllers\\Admin\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/source/Controllers/Admin',
+        ),
         'WebMovies\\Controllers\\' => 
         array (
             0 => __DIR__ . '/../..' . '/source/Controllers',
@@ -32,7 +46,11 @@ class ComposerStaticInitc373c8cdef6849f6ead6819aa587a082
 
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
+        'WebMovies\\Controllers\\Admin\\AdminController' => __DIR__ . '/../..' . '/source/Controllers/Admin/AdminController.php',
         'WebMovies\\Controllers\\HomeController' => __DIR__ . '/../..' . '/source/Controllers/HomeController.php',
+        'WebMovies\\Controllers\\Web\\WebController' => __DIR__ . '/../..' . '/source/Controllers/Web/WebController.php',
+        'WebMovies\\Models\\Model' => __DIR__ . '/../..' . '/source/models/Model.php',
+        'WebMovies\\Support\\Connect' => __DIR__ . '/../..' . '/source/support/Connect.php',
         'WebMovies\\Support\\Request' => __DIR__ . '/../..' . '/source/support/Request.php',
         'WebMovies\\Support\\Router' => __DIR__ . '/../..' . '/source/support/Router.php',
     );

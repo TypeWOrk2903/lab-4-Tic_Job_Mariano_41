@@ -10,11 +10,10 @@ use WebMovies\Support\Request;
  * WebController — Área pública do WebMovies.
  *
  * Rotas:
- *   GET  /              → home()
- *   GET  /filme         → movieDetail()   (?id=tt1234567)
- *   GET  /login         → loginForm()
- *   POST /login         → loginSubmit()
- *   GET  /logout        → logOut()
+ *   GET  /       → home()
+ *   GET  /filme  → movieDetail()
+ *
+ * Autenticação delegada ao AuthController.
  */
 final class WebController
 {
@@ -53,7 +52,6 @@ final class WebController
 
     /**
      * GET /
-     * Página inicial: catálogo de recomendações + barra de busca.
      */
     public function home(Request $request): void
     {
@@ -65,8 +63,7 @@ final class WebController
     }
 
     /**
-     * GET /filme?id=tt1234567
-     * Detalhes de um filme (consumidos via JS na OMDb API).
+     * GET /filme?id=...
      */
     public function movieDetail(Request $request): void
     {
@@ -81,74 +78,5 @@ final class WebController
             'imdbId'     => $imdbId,
             'isLoggedIn' => $this->isLoggedIn(),
         ]);
-    }
-
-    // ── Autenticação ─────────────────────────────────────────────────────
-
-    public function registerForm() : void {
-            if ($this->isLoggedIn()) {
-            header('Location: ' . CONF_URL_BASE . '/');
-            exit;
-        }
-
-        $this->view('register', [
-            'pageTitle' => 'Cadastrar-se | WebMovies',
-            'error'     => $_SESSION['login_error'] ?? null,
-        ]);
-
-        unset($_SESSION['login_error']);
-    }
-    /**
-     * GET /login
-     * Exibe o formulário de login.
-     */
-    public function loginForm(Request $request): void
-    {
-        if ($this->isLoggedIn()) {
-            header('Location: ' . CONF_URL_BASE . '/');
-            exit;
-        }
-
-        $this->view('login', [
-            'pageTitle' => 'Entrar | WebMovies',
-            'error'     => $_SESSION['login_error'] ?? null,
-        ]);
-
-        unset($_SESSION['login_error']);
-    }
-
-    /**
-     * POST /login
-     * Processa o formulário de login (validação básica; BD a implementar).
-     */
-    public function loginSubmit(Request $request): void
-    {
-        $this->startSession();
-
-        $email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
-        $pass  = $_POST['password'] ?? '';
-
-        if (!$email || strlen($pass) < 6) {
-            $_SESSION['login_error'] = 'Credenciais inválidas.';
-            header('Location: ' . CONF_URL_BASE . '/login');
-            exit;
-        }
-
-        // TODO: validar contra BD com password_verify()
-        // Simulação — substituir pela consulta real ao Model
-        $_SESSION['login_error'] = 'Usuário ou senha incorretos.';
-        header('Location: ' . CONF_URL_BASE . '/login');
-        exit;
-    }
-
-    /**
-     * GET /logout
-     */
-    public function logOut(Request $request): void
-    {
-        $this->startSession();
-        session_destroy();
-        header('Location: ' . CONF_URL_BASE . '/');
-        exit;
     }
 }

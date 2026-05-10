@@ -8,5 +8,7 @@ $baseDir = dirname($vendorDir);
 return array(
     'WebMovies\\Support\\' => array($baseDir . '/source/support'),
     'WebMovies\\Models\\' => array($baseDir . '/source/models'),
+    'WebMovies\\Controllers\\Web\\' => array($baseDir . '/source/Controllers/Web'),
+    'WebMovies\\Controllers\\Admin\\' => array($baseDir . '/source/Controllers/Admin'),
     'WebMovies\\Controllers\\' => array($baseDir . '/source/Controllers'),
 );

@@ -7,7 +7,11 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
+    'WebMovies\\Controllers\\Admin\\AdminController' => $baseDir . '/source/Controllers/Admin/AdminController.php',
     'WebMovies\\Controllers\\HomeController' => $baseDir . '/source/Controllers/HomeController.php',
+    'WebMovies\\Controllers\\Web\\WebController' => $baseDir . '/source/Controllers/Web/WebController.php',
+    'WebMovies\\Models\\Model' => $baseDir . '/source/models/Model.php',
+    'WebMovies\\Support\\Connect' => $baseDir . '/source/support/Connect.php',
     'WebMovies\\Support\\Request' => $baseDir . '/source/support/Request.php',
     'WebMovies\\Support\\Router' => $baseDir . '/source/support/Router.php',
 );
