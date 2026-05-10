@@ -32,6 +32,27 @@ body {
 .wm-theme-btn:hover  { box-shadow: var(--neu-shadow-hover) !important; color: var(--color-cyan) !important; }
 .wm-theme-btn:active { box-shadow: var(--neu-shadow-active) !important; }
 
+/* --- Lang btn (neumórfico compacto) ----------------- */
+.wm-btn-neumorph {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.85rem;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  background: var(--color-panel);
+  color: var(--color-text);
+  box-shadow: var(--neu-shadow-sm);
+  transition: box-shadow 0.2s, color 0.2s;
+  white-space: nowrap;
+}
+.wm-btn-neumorph:hover  { box-shadow: var(--neu-shadow-hover); color: var(--color-cyan); }
+.wm-btn-neumorph:active { box-shadow: var(--neu-shadow-active); }
+
 /* --- Card ------------------------------------------- */
 .wm-card {
   border-radius: var(--radius-lg);
@@ -88,6 +109,88 @@ body {
   overflow: hidden;
 }
 .wm-card__genres { font-size: 0.7rem; color: var(--color-text-muted); }
+.wm-card__year   { font-size: 0.7rem; color: var(--color-text-muted); margin: 0; }
+
+/* Meta row (ano + tags) no card */
+.wm-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.3rem;
+  margin-top: 0.25rem;
+}
+
+/* Score overlay no poster (canto inferior esquerdo) */
+.wm-card__score-wrap {
+  position: absolute;
+  bottom: 0.5rem;
+  left: 0.5rem;
+}
+
+/* --- Score estilo Rotten Tomatoes ------------------ */
+.wm-score {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  border: 1.5px solid currentColor;
+  backdrop-filter: blur(4px);
+  white-space: nowrap;
+}
+.wm-score--fresh  { color: #21d07a; background: rgba(33, 208, 122, 0.18); }
+.wm-score--mixed  { color: #d2d531; background: rgba(210, 213, 49,  0.18); }
+.wm-score--rotten { color: #f93208; background: rgba(249, 50,   8,  0.18); }
+.wm-score--lg     { font-size: 0.88rem; padding: 0.3rem 0.85rem; border-width: 2px; }
+
+/* --- Tag / Gênero ---------------------------------- */
+.wm-tag {
+  display: inline-block;
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
+  font-size: 0.62rem;
+  font-weight: 600;
+  background: var(--color-cyan-dim);
+  color: var(--color-cyan);
+  white-space: nowrap;
+}
+.wm-tag--hero {
+  font-size: 0.72rem;
+  padding: 0.2rem 0.65rem;
+}
+
+/* --- Hero: transição suave de imagem de fundo ------ */
+.wm-hero__bg {
+  transition: opacity 0.55s ease;
+}
+
+/* --- Hero: botões de navegação (prev / next) ------- */
+.wm-hero__nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 20;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  background: rgba(0, 0, 0, 0.45);
+  color: #fff;
+  backdrop-filter: blur(4px);
+  transition: background 0.2s, transform 0.2s;
+}
+.wm-hero__nav:hover  { background: rgba(0, 0, 0, 0.75); }
+.wm-hero__nav:active { transform: translateY(-50%) scale(0.9); }
+.wm-hero__nav--prev  { left: 1rem; }
+.wm-hero__nav--next  { right: 1rem; }
 
 /* --- Skeleton shimmer ------------------------------- */
 .wm-skeleton {

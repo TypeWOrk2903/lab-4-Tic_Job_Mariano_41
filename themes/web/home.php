@@ -37,11 +37,13 @@
                  gap-4 px-4 sm:px-6 py-3 backdrop-blur-md border-b wm-header-bg"
           style="border-color: var(--color-border)" role="banner">
 
+    <!-- Col 1: Logo -->
     <a href="<?= CONF_URL_BASE ?>/" aria-label="WebMovies – início"
        class="flex font-display text-lg sm:text-xl font-bold tracking-wider select-none shrink-0">
       <span style="color:var(--color-text)">Web</span><span style="color:var(--color-cyan)">Movies</span>
     </a>
 
+    <!-- Col 2: Busca (centralizada) -->
     <label class="relative flex items-center w-full max-w-lg mx-auto" for="wm-search">
       <i class="fa-solid fa-magnifying-glass absolute left-3 text-xs pointer-events-none"
          style="color:var(--color-text-muted)" aria-hidden="true"></i>
@@ -51,22 +53,32 @@
                     border:1.5px solid transparent;box-shadow:var(--neu-shadow-sm)" />
     </label>
 
+    <!-- Col 3: Ações (idioma + tema + user) -->
     <div class="flex items-center gap-2 shrink-0">
 
-      <!-- Botão tema -->
+      <!-- Tema -->
       <button type="button"
               class="wm-theme-btn w-10 h-10 rounded-full flex items-center justify-center
                      text-base cursor-pointer border-none transition-all duration-200"
               style="background:var(--color-panel);color:var(--color-text);box-shadow:var(--neu-shadow-sm)"
               aria-label="Alternar tema"></button>
+      <!-- Idioma -->
+      <button data-lang-btn type="button" class="wm-btn-neumorph"
+              title="Alternar idioma" aria-label="Alternar idioma">
+        <i class="fa-solid fa-language"></i>
+        <span class="hidden sm:inline">EN</span>
+      </button>
 
+      <!-- User -->
       <?php if ($isLoggedIn): ?>
-        <span class="text-xs hidden sm:block" style="color:var(--color-text-muted)">
+        <span class="text-xs hidden md:block" style="color:var(--color-text-muted)">
           Olá, <?= htmlspecialchars($userLoggedIn ?? '') ?>
         </span>
         <a href="<?= CONF_URL_BASE ?>/logout"
-           class="px-3 py-1.5 rounded-full text-xs font-semibold border-none cursor-pointer"
-           style="background:var(--color-panel);color:var(--color-text-muted);box-shadow:var(--neu-shadow-sm)">
+           class="w-10 h-10 rounded-full flex items-center justify-center text-sm
+                  border-none cursor-pointer transition-all duration-200"
+           style="background:var(--color-panel);color:var(--color-text-muted);box-shadow:var(--neu-shadow-sm)"
+           aria-label="Sair" title="Sair">
           <i class="fa-solid fa-right-from-bracket"></i>
         </a>
       <?php else: ?>
@@ -74,7 +86,8 @@
            class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold
                   tracking-wide uppercase cursor-pointer border-none transition-all duration-150"
            style="background:var(--color-cyan);color:#fff;box-shadow:var(--glow-cyan)">
-          <i class="fa-solid fa-user"></i> Entrar
+          <i class="fa-solid fa-user"></i>
+          <span class="hidden sm:inline">Entrar</span>
         </a>
       <?php endif; ?>
     </div>
@@ -147,27 +160,5 @@
        role="status" aria-live="assertive" aria-atomic="true"></div>
 
   <script type="module" src="<?= CONF_URL_BASE ?>/themes/painel/assets/js/app.js"></script>
-  <script>
-    /**
- * Lógica para Banner Aleatório (Hero)
- * Coloque isso no seu loadSections()
- */
-
-const FAMILY_BANNERS = [
-    "https://image.tmdb.org/t/p/w1280/stKGOmbuvYUZvjNYD100vLhpR6Z.jpg", // Divertida Mente 2
-    "https://image.tmdb.org/t/p/w1280/6t767YV7S6OQo6xXvVpUq8R3eX.jpg", // Moana 2
-    "https://image.tmdb.org/t/p/w1280/kY2Z7Jv9u6nZbiT9tXo9kH6pKGQ.jpg", // Kung Fu Panda 4
-    "https://image.tmdb.org/t/p/w1280/7O969iY0L3vW8DqS36p6K3yOq6b.jpg"  // Mufasa
-];
-
-function setRandomHeroBanner() {
-    const heroBg = document.querySelector('.wm-hero__bg');
-    if (!heroBg) return;
-
-    // Escolhe um link aleatório da lista
-    const randomIndex = Math.floor(Math.random() * FAMILY_BANNERS.length);
-    heroBg.src = FAMILY_BANNERS[randomIndex];
-}
-  </script>
 </body>
 </html>

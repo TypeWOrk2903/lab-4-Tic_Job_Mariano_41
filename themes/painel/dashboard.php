@@ -61,12 +61,14 @@
                  gap-4 px-4 sm:px-6 py-3 backdrop-blur-md border-b wm-header-bg"
           style="border-color: var(--color-border)" role="banner">
 
+    <!-- Col 1: Logo -->
     <a href="/" aria-label="WebMovies – página inicial"
        class="flex font-display text-lg sm:text-xl font-bold tracking-wider select-none shrink-0">
       <span style="color: var(--color-text)">Web</span>
       <span style="color: var(--color-cyan)">Movies</span>
     </a>
 
+    <!-- Col 2: Busca -->
     <label class="relative flex items-center w-full max-w-lg mx-auto" for="wm-search">
       <i class="fa-solid fa-magnifying-glass absolute left-3 text-xs pointer-events-none"
          style="color: var(--color-text-muted)" aria-hidden="true"></i>
@@ -83,13 +85,26 @@
       />
     </label>
 
-    <button type="button"
-            class="wm-theme-btn w-10 h-10 rounded-full flex items-center justify-center
-                   text-base cursor-pointer border-none shrink-0 transition-all duration-200"
-            style="background: var(--color-panel); color: var(--color-text); box-shadow: var(--neu-shadow-sm)"
-            aria-label="Alternar tema claro/escuro">
-      <!-- injetado pelo theme.js (Font Awesome) -->
-    </button>
+    <!-- Col 3: Ações (idioma + tema) -->
+    <div class="flex items-center gap-2 shrink-0">
+
+      <!-- Idioma -->
+      <button data-lang-btn type="button" class="wm-btn-neumorph"
+              title="Alternar idioma" aria-label="Alternar idioma">
+        <i class="fa-solid fa-language"></i>
+        <span class="hidden sm:inline">EN</span>
+      </button>
+
+      <!-- Tema -->
+      <button type="button"
+              class="wm-theme-btn w-10 h-10 rounded-full flex items-center justify-center
+                     text-base cursor-pointer border-none transition-all duration-200"
+              style="background: var(--color-panel); color: var(--color-text); box-shadow: var(--neu-shadow-sm)"
+              aria-label="Alternar tema claro/escuro">
+        <!-- injetado pelo theme.js (Font Awesome) -->
+      </button>
+
+    </div>
   </header>
 
 
@@ -98,10 +113,18 @@
            aria-label="Filme em destaque">
 
     <img class="wm-hero__bg absolute inset-0 w-full h-full object-cover"
-         style="opacity:.35" src="" alt="" aria-hidden="true" />
+         src="" alt="" aria-hidden="true" />
     <div class="absolute inset-0"
          style="background: linear-gradient(to top, var(--color-bg) 10%, rgba(0,0,0,0.25) 50%, transparent 80%)">
     </div>
+
+    <!-- Setas de navegação -->
+    <button class="wm-hero__nav wm-hero__nav--prev" aria-label="Filme anterior">
+      <i class="fa-solid fa-chevron-left"></i>
+    </button>
+    <button class="wm-hero__nav wm-hero__nav--next" aria-label="Próximo filme">
+      <i class="fa-solid fa-chevron-right"></i>
+    </button>
 
     <div class="relative z-10 max-w-2xl px-5 sm:px-8 py-16 md:py-24">
 
@@ -111,8 +134,18 @@
         <i class="fa-solid fa-fire-flame-curved"></i> EM DESTAQUE
       </span>
 
-      <h1 class="wm-hero__title font-display text-4xl sm:text-5xl md:text-6xl font-bold leading-tight mb-4"
+      <h1 class="wm-hero__title font-display text-4xl sm:text-5xl md:text-6xl font-bold leading-tight mb-3"
           style="color: var(--color-text)">Carregando…</h1>
+
+      <!-- Meta: score + gêneros + ano + votos -->
+      <div class="flex flex-wrap items-center gap-3 mb-4">
+        <span data-hero="score"></span>
+        <div data-hero="tags" class="flex flex-wrap gap-2"></div>
+        <span data-hero="year" class="text-xs font-semibold"
+              style="color: var(--color-text-muted)"></span>
+        <span data-hero="votes" class="text-xs"
+              style="color: var(--color-text-muted)"></span>
+      </div>
 
       <p class="wm-hero__synopsis text-sm sm:text-base leading-relaxed mb-8 max-w-xl line-clamp-3"
          style="color: var(--color-text-muted)"></p>
@@ -175,6 +208,45 @@
       </div>
       <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4"
            data-grid="recommended" aria-live="polite" aria-label="Filmes em alta"></div>
+    </section>
+
+    <!-- Em Cartaz -->
+    <section class="mb-14" aria-labelledby="section-nowplaying">
+      <div class="flex items-center gap-3 mb-6">
+        <i class="fa-solid fa-clapperboard text-xl" style="color: var(--color-cyan)"></i>
+        <h2 class="font-display text-xl sm:text-2xl font-bold tracking-wide"
+            style="color: var(--color-text)" id="section-nowplaying">
+          EM CARTAZ <span style="color: var(--color-amber)">NOS CINEMAS</span>
+        </h2>
+      </div>
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4"
+           data-grid="now-playing" aria-live="polite" aria-label="Filmes em cartaz"></div>
+    </section>
+
+    <!-- Mais Bem Avaliados -->
+    <section class="mb-14" aria-labelledby="section-toprated">
+      <div class="flex items-center gap-3 mb-6">
+        <i class="fa-solid fa-trophy text-xl" style="color: var(--color-amber)"></i>
+        <h2 class="font-display text-xl sm:text-2xl font-bold tracking-wide"
+            style="color: var(--color-text)" id="section-toprated">
+          MAIS BEM <span style="color: var(--color-cyan)">AVALIADOS</span>
+        </h2>
+      </div>
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4"
+           data-grid="top-rated" aria-live="polite" aria-label="Filmes mais bem avaliados"></div>
+    </section>
+
+    <!-- Próximos Lançamentos -->
+    <section class="mb-14" aria-labelledby="section-upcoming">
+      <div class="flex items-center gap-3 mb-6">
+        <i class="fa-solid fa-calendar-days text-xl" style="color: var(--color-cyan)"></i>
+        <h2 class="font-display text-xl sm:text-2xl font-bold tracking-wide"
+            style="color: var(--color-text)" id="section-upcoming">
+          PRÓXIMOS <span style="color: var(--color-amber)">LANÇAMENTOS</span>
+        </h2>
+      </div>
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4"
+           data-grid="upcoming" aria-live="polite" aria-label="Próximos lançamentos"></div>
     </section>
 
   </main>

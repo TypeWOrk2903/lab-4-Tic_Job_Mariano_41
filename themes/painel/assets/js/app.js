@@ -2,8 +2,8 @@
  * WebMovies – Entry point
  * Inicializa tema, eventos e carregamento de dados.
  */
-import ThemeManager          from './theme.js';
-import { loadSections, initSearch } from './movies.js';
+import ThemeManager from './theme.js';
+import { loadSections, initSearch, toggleLanguage } from './movies.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   /* 1. Tema */
@@ -14,9 +14,14 @@ document.addEventListener('DOMContentLoaded', () => {
     themeBtn.addEventListener('click', () => ThemeManager.toggle());
   }
 
-  /* 2. Busca */
+  /* 2. Idioma – conecta todos os botões [data-lang-btn] */
+  document.querySelectorAll('[data-lang-btn]').forEach(btn => {
+    btn.addEventListener('click', () => toggleLanguage());
+  });
+
+  /* 3. Busca */
   initSearch();
 
-  /* 3. Dados TMDB */
+  /* 4. Dados TMDB */
   loadSections();
 });

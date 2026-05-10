@@ -84,7 +84,7 @@
 
     <p class="text-center mt-6 text-xs" style="color:var(--color-text-muted)">
       Ainda não tem conta?
-      <a href="#" style="color:var(--color-cyan)" class="hover:underline">Cadastre-se</a>
+      <a href="<?=CONF_URL_BASE?>/register" style="color:var(--color-cyan)" class="hover:underline">Cadastre-se</a>
     </p>
     <p class="text-center mt-2">
       <a href="<?= CONF_URL_BASE ?>/" class="text-xs" style="color:var(--color-text-subtle)">

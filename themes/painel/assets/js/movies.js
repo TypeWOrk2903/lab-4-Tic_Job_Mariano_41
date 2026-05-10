@@ -1,178 +1,324 @@
 /**
- * WebMovies – OMDb API Integration
- * Restrição +18 aplicada na raiz: toda busca de lista
- * já verifica a classificação antes de retornar.
+ * WebMovies – TMDB API Integration
+ * Design inspirado em AdoroCinema, Ingresso.com e Rotten Tomatoes.
  */
 
-/* ─── Constantes ───────────────────────────────── */
-const API_KEY         = 'd1e10648';
-const BASE_URL        = 'https://www.omdbapi.com/';
-const FALLBACK_POSTER = 'themes/assets/images/no-poster.svg';
+const API_KEY       = 'b0e9f75142eb4a69493d8fba03cf29f5';
+const BASE_URL      = 'https://api.themoviedb.org/3';
+const IMG_BASE      = 'https://image.tmdb.org/t/p/w500';
+const BACKDROP_BASE = 'https://image.tmdb.org/t/p/original';
+// IDs de Gêneros bloqueados (27 = Horror, 53 = Thriller)
+const BLOCKED_GENRES = [27, 53];
 
-const BLOCKED_RATINGS = new Set(['NC-17', 'X', 'XXX', 'R', 'TV-MA']);
-const BLOCKED_KEYWORDS = ['sexy', 'erotic', 'adult', 'porn', 'nude', 'horror 18', 'gore'];
-const BLOCKED_GENRES = ['Horror', 'Thriller', 'Adult'];
+// Idioma ativo — persiste no localStorage
+let LANG = localStorage.getItem('wm-lang') || 'pt-BR';
 
-/* ─── Fetch bruto (uso interno apenas) ─────────── */
-async function _rawFetch(params = {}) {
-    const url = new URL(BASE_URL);
-    url.searchParams.set('apikey', API_KEY);
-    Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
+// Cache de gêneros: { id → nome } (inválido ao trocar idioma)
+let GENRE_MAP = {};
 
-    const res  = await fetch(url.toString());
-    const data = await res.json();
-    if (data.Response === 'False') throw new Error(data.Error);
-    return data;
+/* ─── Toggle de Idioma ─────────────────────────── */
+export async function toggleLanguage() {
+    LANG      = LANG === 'pt-BR' ? 'en-US' : 'pt-BR';
+    GENRE_MAP = {};                         // invalida cache de gêneros
+    localStorage.setItem('wm-lang', LANG);
+    _updateLangBtn();
+    await loadSections();
 }
 
-/* ─── Validação de conteúdo seguro ─────────────── */
-function isMovieSafe(movie) {
-    const isRatingRestricted = !movie.Rated || movie.Rated === "N/A" || BLOCKED_RATINGS.has(movie.Rated);
-    const hasBlockedKeyword = BLOCKED_KEYWORDS.some(word => movie.Title.toLowerCase().includes(word));
-    const hasBlockedGenre = movie.Genre && BLOCKED_GENRES.some(genre => movie.Genre.includes(genre));
-    
-    return !(isRatingRestricted || hasBlockedKeyword || hasBlockedGenre);
-}
-
-/**
- * apiFetch — busca de lista com filtro +18 integrado.
- * Para cada resultado da busca, busca os detalhes e descarta
- * filmes com classificação etária restrita ou palavras-chave bloqueadas.
- *
- * @param {object} params  Parâmetros OMDb (s, type, y…)
- * @returns {Promise<object[]>}  Array de filmes seguros (com detalhes)
- */
-async function apiFetch(params = {}) {
-    const data = await _rawFetch(params);
-    const list = data.Search ?? [];
-
-    const details = await Promise.all(
-        list.map(async m => {
-            try {
-                const detail = await _rawFetch({ i: m.imdbID });
-                return isMovieSafe(detail) ? detail : null;
-            } catch {
-                return null;
-            }
-        })
-    );
-
-    return details.filter(Boolean);
-}
-
-/* ─── UI: Skeletons ────────────────────────────── */
-function renderSkeletons(container, count = 6) {
-    if (!container) return;
-    container.innerHTML = Array.from({ length: count })
-        .map(() => `<div class="wm-skeleton"><div class="wm-skeleton__inner"></div></div>`)
-        .join('');
-}
-
-/* ─── Componente: Card OMDb ────────────────────── */
-function buildCard(movie) {
-    // Na OMDb, os campos são Poster, Title, Year e imdbID
-    const poster = (movie.Poster && movie.Poster !== "N/A") ? movie.Poster : FALLBACK_POSTER;
-    const title  = movie.Title || 'Sem título';
-    const year   = movie.Year || '—';
-
-    const article = document.createElement('article');
-    article.className = 'wm-card';
-    article.dataset.imdbId = movie.imdbID;
-
-    article.innerHTML = `
-        <div class="wm-card__poster">
-            <img src="${poster}" alt="${title}" loading="lazy" />
-            <div class="wm-card__overlay"></div>
-        </div>
-        <div class="wm-card__body">
-            <h3 class="wm-card__title">${title}</h3>
-            <p class="wm-card__genres">${year}</p>
-        </div>`;
-    
-    return article;
-}
-
-/* ─── Lógica: Renderizar Listas ────────────────── */
-function renderMovies(container, movies) {
-    if (!container) return;
-    container.innerHTML = '';
-    
-    if (!movies || movies.length === 0) {
-        container.innerHTML = `<div class="wm-state"><p>Nenhum filme encontrado.</p></div>`;
-        return;
-    }
-
-    movies.forEach(m => container.appendChild(buildCard(m)));
-}
-
-/* ─── Lógica: Busca ────────────────────────────── */
-let searchTimer = null;
-export function initSearch() {
-    const input = document.querySelector('.wm-search');
-    const grid = document.querySelector('[data-grid="popular"]');
-
-    if (!input) return;
-
-    input.addEventListener('input', () => {
-        clearTimeout(searchTimer);
-        const query = input.value.trim();
-
-        if (!query) {
-            loadSections();
-            return;
-        }
-
-        searchTimer = setTimeout(async () => {
-            renderSkeletons(grid, 6);
-            try {
-                const safe = await apiFetch({ s: query, type: 'movie' });
-                renderMovies(grid, safe);
-            } catch (err) {
-                renderMovies(grid, []);
-            }
-        }, 500);
+function _updateLangBtn() {
+    document.querySelectorAll('[data-lang-btn]').forEach(btn => {
+        const icon = btn.querySelector('i');
+        const span = btn.querySelector('span');
+        if (span) span.textContent = LANG === 'pt-BR' ? 'EN' : 'PT';
+        if (icon) icon.className = 'fa-solid fa-language';
     });
 }
 
-/* ─── Inicialização: Filmes Iniciais ───────────── */
-export async function loadSections() {
-    const grid = document.querySelector('[data-grid="popular"]');
-    renderSkeletons(grid, 15);
-
-    // 30+ termos para garantir variedade real a cada carregamento
-    const ALL_TERMS = [
-        'Action', 'Comedy', 'Drama', 'Sci-Fi',
-        'Adventure', 'Romance', 'Fantasy', 'Mystery',
-        'Animation', 'Crime', 'Biography', 'War', 'Western',
-        'Musical', 'Sport', 'History', 'Family', 'Documentary',
-        'Space', 'Zombie', 'Vampire', 'Superhero', 'Detective',
-        'Heist', 'Survival', 'Alien', 'Robot', 'Spy',
-    ];
-
-    // Embaralha e pega 4 termos distintos
-    const shuffled = ALL_TERMS.sort(() => Math.random() - 0.5);
-    const picks    = shuffled.slice(0, 4);
-
+/* ─── Carrega e cacheia gêneros da TMDB ─────────── */
+async function loadGenreMap() {
+    if (Object.keys(GENRE_MAP).length) return;
     try {
-        // Dispara 4 buscas em paralelo
-        const results = await Promise.allSettled(
-            picks.map(term => apiFetch({ s: term, type: 'movie' }))
-        );
+        const url = new URL(`${BASE_URL}/genre/movie/list`);
+        url.searchParams.set('api_key', API_KEY);
+        url.searchParams.set('language', LANG);
+        const res = await fetch(url.toString());
+        if (!res.ok) return;
+        const data = await res.json();
+        data.genres.forEach(g => { GENRE_MAP[g.id] = g.name; });
+    } catch { /* silencioso */ }
+}
 
-        // Junta todos os filmes encontrados, removendo duplicatas por imdbID
-        const seen = new Set();
-        const safe = results
-            .filter(r => r.status === 'fulfilled' && Array.isArray(r.value))
-            .flatMap(r => r.value)
-            .filter(m => {
-                if (seen.has(m.imdbID)) return false;
-                seen.add(m.imdbID);
-                return true;
+/* ─── Score estilo Rotten Tomatoes ──────────────── */
+function scoreInfo(voteAverage) {
+    const pct = Math.round((voteAverage ?? 0) * 10);
+    let cls = 'wm-score--rotten';
+    if (pct >= 75) cls = 'wm-score--fresh';
+    else if (pct >= 60) cls = 'wm-score--mixed';
+    return { pct, cls };
+}
+
+/* ─── Fetch Helper para TMDB ────────────────────── */
+async function apiFetch(endpoint, params = {}) {
+    const url = new URL(`${BASE_URL}${endpoint}`);
+    url.searchParams.set('api_key', API_KEY);
+    url.searchParams.set('language', LANG);
+    url.searchParams.set('region', 'BR');
+    url.searchParams.set('include_adult', 'false');
+
+    Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
+
+    const res = await fetch(url.toString());
+    if (!res.ok) throw new Error(`HTTP ${res.status} – ${endpoint}`);
+
+    const data = await res.json();
+    if (data.results) return filterSafeContent(data.results);
+    return data;
+}
+
+/* ─── Filtro de Segurança Manual ───────────────── */
+function filterSafeContent(movies) {
+    return movies.filter(movie => {
+        if (movie.adult) return false;
+
+        const genres = movie.genre_ids ?? [];
+        if (genres.some(id => BLOCKED_GENRES.includes(id))) return false;
+
+        if (!movie.poster_path || !movie.overview) return false;
+
+        return true;
+    });
+}
+
+/* ─── Skeletons (Placeholder de Carregamento) ─── */
+function renderSkeletons(grid, count = 12) {
+    if (!grid) return;
+    grid.innerHTML = '';
+    for (let i = 0; i < count; i++) {
+        const el = document.createElement('div');
+        el.className = 'wm-skeleton';
+        el.innerHTML = '<div class="wm-skeleton__inner"></div>';
+        grid.appendChild(el);
+    }
+}
+
+/* ─── Renderiza Lista de Filmes no Grid ─────────── */
+function renderMovies(grid, movies) {
+    if (!grid) return;
+    grid.innerHTML = '';
+    if (!movies?.length) {
+        const msg = document.createElement('p');
+        msg.className = 'col-span-full text-center';
+        msg.style.color = 'var(--color-text-muted)';
+        msg.textContent = 'Nenhum filme encontrado.';
+        grid.appendChild(msg);
+        return;
+    }
+    movies.forEach(movie => grid.appendChild(buildCard(movie)));
+}
+
+/* ─── Componente: Card (estilo AdoroCinema / RT) ── */
+function buildCard(movie) {
+    const title  = movie.title || movie.name || 'Sem título';
+    const year   = (movie.release_date || '').slice(0, 4);
+    const { pct, cls } = scoreInfo(movie.vote_average);
+
+    // Máximo 2 gêneros visíveis por card
+    const genreNames = (movie.genre_ids ?? [])
+        .slice(0, 2)
+        .map(id => GENRE_MAP[id])
+        .filter(Boolean);
+
+    const article = document.createElement('article');
+    article.className = 'wm-card';
+    article.innerHTML = `
+        <div class="wm-card__poster">
+            <img loading="lazy" />
+            <div class="wm-card__overlay"></div>
+            <div class="wm-card__score-wrap">
+                <span class="wm-score ${cls}">${pct}%</span>
+            </div>
+        </div>
+        <div class="wm-card__body">
+            <h3 class="wm-card__title"></h3>
+            <div class="wm-card__meta">
+                <span class="wm-card__year"></span>
+                ${genreNames.map(() => `<span class="wm-tag"></span>`).join('')}
+            </div>
+        </div>`;
+
+    const img = article.querySelector('img');
+    img.src = `${IMG_BASE}${movie.poster_path}`;
+    img.alt = title;
+    article.querySelector('.wm-card__title').textContent = title;
+    article.querySelector('.wm-card__year').textContent  = year;
+    article.querySelectorAll('.wm-tag').forEach((el, i) => {
+        el.textContent = genreNames[i];
+    });
+
+    return article;
+}
+
+/* ─── Hero com Navegação (estilo Ingresso.com) ───── */
+let heroMovies = [];
+let heroIndex  = 0;
+let heroTimer  = null;
+
+function applyHero(movie) {
+    if (!movie) return;
+    const { pct, cls } = scoreInfo(movie.vote_average);
+
+    const bg    = document.querySelector('.wm-hero__bg');
+    const title = document.querySelector('.wm-hero__title');
+    const syn   = document.querySelector('.wm-hero__synopsis');
+    const score = document.querySelector('[data-hero="score"]');
+    const tags  = document.querySelector('[data-hero="tags"]');
+    const year  = document.querySelector('[data-hero="year"]');
+    const votes = document.querySelector('[data-hero="votes"]');
+
+    if (bg) {
+        bg.style.opacity = '0';
+        bg.src = `${BACKDROP_BASE}${movie.backdrop_path}`;
+        bg.onload = () => { bg.style.opacity = '.4'; };
+        bg.alt = movie.title || '';
+    }
+    if (title) title.textContent = movie.title || movie.name || '';
+    if (syn)   syn.textContent   = movie.overview || '';
+    if (year)  year.textContent  = (movie.release_date || '').slice(0, 4);
+    if (votes) votes.textContent = movie.vote_count
+        ? `${movie.vote_count.toLocaleString('pt-BR')} avaliações`
+        : '';
+
+    if (score) {
+        score.innerHTML = '';
+        const badge = document.createElement('span');
+        badge.className = `wm-score wm-score--lg ${cls}`;
+        badge.textContent = `${pct}%`;
+        score.appendChild(badge);
+    }
+
+    if (tags) {
+        tags.innerHTML = '';
+        (movie.genre_ids ?? [])
+            .slice(0, 3)
+            .map(id => GENRE_MAP[id])
+            .filter(Boolean)
+            .forEach(g => {
+                const span = document.createElement('span');
+                span.className = 'wm-tag wm-tag--hero';
+                span.textContent = g;
+                tags.appendChild(span);
             });
+    }
+}
 
-        renderMovies(grid, safe.slice(0, 18));
+function heroNav(dir) {
+    if (!heroMovies.length) return;
+    heroIndex = (heroIndex + dir + heroMovies.length) % heroMovies.length;
+    applyHero(heroMovies[heroIndex]);
+    resetHeroTimer();
+}
+
+function resetHeroTimer() {
+    clearInterval(heroTimer);
+    heroTimer = setInterval(() => heroNav(1), 8000);
+}
+
+function initHeroNav() {
+    const prev = document.querySelector('.wm-hero__nav--prev');
+    const next = document.querySelector('.wm-hero__nav--next');
+    if (prev) prev.addEventListener('click', () => heroNav(-1));
+    if (next) next.addEventListener('click', () => heroNav(1));
+}
+
+async function loadHero() {
+    try {
+        heroMovies = await apiFetch('/trending/movie/day');
+        heroIndex  = 0;
+        if (!heroMovies.length) return;
+        applyHero(heroMovies[0]);
+        initHeroNav();
+        resetHeroTimer();
     } catch (err) {
-        console.error("Erro ao carregar seção inicial.", err);
+        console.error('[Hero Error]:', err.message);
+    }
+}
+
+/* ─── Busca com Debounce ────────────────────────── */
+export function initSearch() {
+    const input = document.getElementById('wm-search');
+    if (!input) return;
+
+    const gridPopular = document.querySelector('[data-grid="popular"]');
+    let debounceTimer;
+
+    input.addEventListener('input', () => {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(async () => {
+            const query = input.value.trim();
+
+            if (!query) {
+                await loadSection(gridPopular, '/discover/movie', {
+                    sort_by: 'popularity.desc',
+                    'certification_country': 'BR',
+                    'certification.lte': 'L',
+                    page: 1,
+                });
+                return;
+            }
+
+            renderSkeletons(gridPopular, 12);
+            try {
+                const results = await apiFetch('/search/movie', { query });
+                renderMovies(gridPopular, results);
+            } catch (err) {
+                console.error('[Search Error]:', err.message);
+                renderMovies(gridPopular, []);
+            }
+        }, 400);
+    });
+}
+
+/* ─── Helper: carrega uma seção ─────────────────── */
+async function loadSection(grid, endpoint, params = {}) {
+    renderSkeletons(grid, 12);
+    try {
+        const data = await apiFetch(endpoint, params);
+        renderMovies(grid, data);
+    } catch (err) {
+        console.error(`[Section Error] ${endpoint}:`, err.message);
         renderMovies(grid, []);
     }
+}
+
+/* ─── Inicialização: Todas as Seções ────────────── */
+export async function loadSections() {
+    _updateLangBtn();
+    const grids = {
+        popular:    document.querySelector('[data-grid="popular"]'),
+        trending:   document.querySelector('[data-grid="recommended"]'),
+        nowPlaying: document.querySelector('[data-grid="now-playing"]'),
+        topRated:   document.querySelector('[data-grid="top-rated"]'),
+        upcoming:   document.querySelector('[data-grid="upcoming"]'),
+    };
+
+    // Skeletons imediatos em todos os grids
+    Object.values(grids).forEach(g => renderSkeletons(g, 12));
+
+    // Carrega gêneros primeiro (necessário para os cards)
+    await loadGenreMap();
+
+    // Carrega todas as seções + hero em paralelo
+    await Promise.all([
+        loadSection(grids.popular,    '/discover/movie', {
+            sort_by: 'popularity.desc',
+            'certification_country': 'BR',
+            'certification.lte': 'L',
+            page: 1,
+        }),
+        loadSection(grids.trending,   '/trending/movie/week'),
+        loadSection(grids.nowPlaying, '/movie/now_playing', { page: 1 }),
+        loadSection(grids.topRated,   '/movie/top_rated',   { page: 1 }),
+        loadSection(grids.upcoming,   '/movie/upcoming',    { page: 1 }),
+        loadHero(),
+    ]);
 }

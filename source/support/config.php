@@ -25,9 +25,13 @@ define("CONF_URL_BASE", "http://localhost/WebMovies");
 
 // Caminho para a pasta de temas (Frontend)
 define("CONF_VIEW_PATH", __DIR__ . "/../../themes");
+define("CONF_VIEW_PATH_WEB", __DIR__ . "/../../themes/web");
+define("CONF_VIEW_PATH_Adm", __DIR__ . "/../../themes/painel");
+
+
 
 // URL para os Assets (CSS, JS, Imagens) - Use isso no seu HTML
-define("CONF_URL_THEME_ASSETS", CONF_URL_BASE . "/themes/assets");
+define("CONF_URL_THEME_ASSETS", CONF_URL_BASE . "/themes/painel/assets");
 
 /**
  * FUNÇÃO AUXILIAR DE RENDERIZAÇÃO (Otimização)

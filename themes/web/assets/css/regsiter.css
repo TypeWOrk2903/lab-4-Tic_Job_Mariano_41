@@ -1,0 +1,90 @@
+/* Layout da Autenticação */
+.wm-auth {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: var(--bg-color, #e0e5ec); /* Cor padrão neumórfica */
+}
+
+.wm-auth__container {
+    width: 100%;
+    max-width: 400px;
+    padding: 2rem;
+}
+
+/* O Form Neumórfico */
+.wm-auth__form {
+    padding: 2.5rem;
+    border-radius: 30px;
+    background: #e0e5ec;
+    box-shadow: 20px 20px 60px #bec3c9, 
+               -20px -20px 60px #ffffff;
+    text-align: center;
+}
+
+.wm-auth__title {
+    color: #31344b;
+    margin-bottom: 0.5rem;
+    font-size: 1.8rem;
+}
+
+.wm-auth__subtitle {
+    color: #777;
+    margin-bottom: 2rem;
+    font-size: 0.9rem;
+}
+
+/* Campos de Input */
+.wm-auth__field {
+    text-align: left;
+    margin-bottom: 1.5rem;
+}
+
+.wm-auth__field label {
+    display: block;
+    margin-bottom: 0.5rem;
+    margin-left: 10px;
+    color: #444;
+    font-weight: 600;
+}
+
+.wm-auth__field input {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    outline: none;
+    background: #e0e5ec;
+    border-radius: 15px;
+    box-shadow: inset 6px 6px 12px #bec3c9, 
+                inset -6px -6px 12px #ffffff;
+    color: #31344b;
+    transition: all 0.3s ease;
+}
+
+.wm-auth__field input:focus {
+    box-shadow: inset 4px 4px 8px #bec3c9, 
+                inset -4px -4px 8px #ffffff;
+}
+
+/* Botão Neumórfico */
+.wm-btn {
+    width: 100%;
+    padding: 15px;
+    margin-top: 1rem;
+    border: none;
+    border-radius: 15px;
+    background: #e0e5ec;
+    box-shadow: 6px 6px 12px #bec3c9, 
+                -6px -6px 12px #ffffff;
+    color: #31344b;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.wm-btn:active {
+    box-shadow: inset 4px 4px 8px #bec3c9, 
+                inset -4px -4px 8px #ffffff;
+    transform: scale(0.98);
+}
