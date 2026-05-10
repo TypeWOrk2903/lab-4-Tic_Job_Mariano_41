@@ -30,13 +30,13 @@ $router->post('/login',    [AuthController::class, 'loginSubmit']);
 $router->get('/forget',    [AuthController::class, 'forgetForm']);
 $router->post('/forget',   [AuthController::class, 'forgetSubmit']);
 $router->get('/logout',    [AuthController::class, 'logOut']);
-$router->get("/filme/{id}", "WebController:movieDetail");
+$router->get("/filme/{id}", [WebController::class, "movieDetail"]);
 
 // ── Painel Admin ──────────────────────────────────────
 $router->get('/admin',          [AdminController::class, 'dashboard']);
 $router->get('/admin/settings', [AdminController::class, 'settings']);
-$router->get("/filme/{id}", "WebController:movieDetail");
-$router->post('/admin/settings',[AdminController::class, 'saveSettings']);
+$router->get("/filme/{id}", [AdminController::class, "movieDetail"]);
+$router->post('/admin/settings', [AdminController::class, 'saveSettings']);
 $router->get('/admin/logout',   [AdminController::class, 'logOut']);
 
 $router->dispatch($request);

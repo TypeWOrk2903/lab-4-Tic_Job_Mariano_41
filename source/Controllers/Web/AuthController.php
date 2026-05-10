@@ -54,7 +54,6 @@ final class AuthController
 
     private function redirect(string $path): never
     {
-        session_write_close(); // garante que a sessão é gravada antes do redirect
         header('Location: ' . CONF_URL_BASE . $path);
         exit;
     }
@@ -241,10 +240,6 @@ final class AuthController
      */
     private function createSession(User $user): void
     {
-        // false = mantém dados da sessão atual; novo ID é gerado sem apagar o antigo
-        // Previne Session Fixation (OWASP A07) sem risco de perda de dados no XAMPP
-        session_regenerate_id(false);
-
         $_SESSION['user_id']         = $user->id;
         $_SESSION['user_name']       = $user->name;
         $_SESSION['user_email']      = $user->email;

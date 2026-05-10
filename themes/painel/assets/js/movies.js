@@ -122,7 +122,6 @@ function buildCard(movie) {
     const year   = (movie.release_date || '').slice(0, 4);
     const { pct, cls } = scoreInfo(movie.vote_average);
 
-    // Máximo 2 gêneros visíveis por card
     const genreNames = (movie.genre_ids ?? [])
         .slice(0, 2)
         .map(id => GENRE_MAP[id])
@@ -130,6 +129,10 @@ function buildCard(movie) {
 
     const article = document.createElement('article');
     article.className = 'wm-card';
+    
+    // Cursor pointer para indicar que é clicável
+    article.style.cursor = 'pointer';
+
     article.innerHTML = `
         <div class="wm-card__poster">
             <img loading="lazy" />
@@ -146,8 +149,9 @@ function buildCard(movie) {
             </div>
         </div>`;
 
+    // 1. Configuração da Imagem e Textos
     const img = article.querySelector('img');
-    img.src = `${IMG_BASE}${movie.poster_path}`;
+    img.src = movie.poster_path ? `${IMG_BASE}${movie.poster_path}` : 'URL_DA_SUA_IMAGEM_PADRAO';
     img.alt = title;
     article.querySelector('.wm-card__title').textContent = title;
     article.querySelector('.wm-card__year').textContent  = year;
@@ -155,9 +159,23 @@ function buildCard(movie) {
         el.textContent = genreNames[i];
     });
 
+    // 2. Lógica do Clique com Mascaramento de ID (URL Safe)
+    article.addEventListener('click', () => {
+        const salt = "webmovies_ipil_2026"; // O mesmo salt do PHP!
+        const rawData = `${movie.id}|${salt}`;
+        
+        // btoa gera o base64, e o replace limpa para ser aceito na URL (URL Safe)
+        const maskedId = btoa(rawData)
+            .replace(/\+/g, '-')
+            .replace(/\//g, '_')
+            .replace(/=+$/, ''); 
+
+        // Redireciona para a rota configurada no PHP
+        window.location.href = `${CONF_URL_BASE}/filme/${maskedId}`;
+    });
+
     return article;
 }
-
 /* ─── Hero com Navegação (estilo Ingresso.com) ───── */
 let heroMovies = [];
 let heroIndex  = 0;
