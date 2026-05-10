@@ -6,6 +6,7 @@ namespace WebMovies\Controllers\Web;
 
 use WebMovies\Support\Request;
 use WebMovies\Support\Session;
+use WebMovies\Models\Genre;
 
 /**
  * WebController — Área pública do WebMovies.
@@ -53,10 +54,17 @@ final class WebController
      */
     public function home(Request $request): void
     {
+        $s        = $this->session();
+        $loggedIn = $s->isLoggedIn();
+        $userId   = (int) $s->get('user_id');
+
         $this->view('home', [
             'pageTitle'    => 'WebMovies – Recomendações de Filmes',
-            'isLoggedIn'   => $this->isLoggedIn(),
-            'userLoggedIn' => $this->session()->get('user_name'),
+            'isLoggedIn'   => $loggedIn,
+            'userLoggedIn' => $s->get('user_name'),
+            'userAvatar'   => $s->get('user_avatar'),
+            'genres'       => Genre::all(),
+            'userTmdbIds'  => $loggedIn ? Genre::userTmdbIds($userId) : [],
         ]);
     }
 

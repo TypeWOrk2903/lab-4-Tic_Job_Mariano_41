@@ -349,3 +349,37 @@ export async function loadSections() {
         loadHero(),
     ]);
 }
+
+/**
+ * Carrega filmes de um género específico no grid [data-grid="genre"].
+ * @param {number|string} tmdbGenreId  ID do género na TMDB (vazio = populares)
+ * @param {string} genreLabel  Nome do género para o título da secção
+ */
+export async function loadByGenre(tmdbGenreId, genreLabel = 'POPULARES') {
+    await loadGenreMap();
+
+    const grid  = document.querySelector('[data-grid="genre"]');
+    const title = document.getElementById('genre-title');
+    if (!grid) return;
+
+    if (title) title.textContent = genreLabel.toUpperCase();
+
+    if (!tmdbGenreId) {
+        // Sem filtro → populares
+        await loadSection(grid, '/discover/movie', {
+            sort_by: 'popularity.desc',
+            'certification_country': 'BR',
+            'certification.lte': 'L',
+            page: 1,
+        });
+        return;
+    }
+
+    await loadSection(grid, '/discover/movie', {
+        with_genres:   tmdbGenreId,
+        sort_by:       'popularity.desc',
+        'certification_country': 'BR',
+        'certification.lte': 'L',
+        page: 1,
+    });
+}

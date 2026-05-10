@@ -33,6 +33,7 @@ final class User extends Model
     public ?string $email      = null;
     public ?string $password   = null;
     public ?string $forget     = null;
+    public ?string $avatar     = null;
     public ?string $created_at = null;
 
     // ── Configuração ─────────────────────────────────────────────────────
@@ -121,9 +122,9 @@ final class User extends Model
     public function generateForgetToken(string $email): ?string
     {
         $user = $this->findByEmail($email);
-        if (!$user) return null;   // Não revela ao chamador — só ao controller
+        if (!$user) return null;
 
-        $token = bin2hex(random_bytes(32));   // 64 chars, criptograficamente seguro
+        $token = bin2hex(random_bytes(32));
 
         $pdo = Connect::getInstance();
         if (!$pdo) return null;
@@ -136,6 +137,83 @@ final class User extends Model
             return $token;
         } catch (PDOException) {
             return null;
+        }
+    }
+
+    // ── Perfil ────────────────────────────────────────────────────────────
+
+    /** Busca um utilizador pelo ID. */
+    public function findById(int $id): ?static
+    {
+        $pdo = Connect::getInstance();
+        if (!$pdo) return null;
+
+        try {
+            $stmt = $pdo->prepare(
+                "SELECT * FROM {$this->entity} WHERE id = :id LIMIT 1"
+            );
+            $stmt->execute([':id' => $id]);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            if (!$row) return null;
+
+            $user = new static();
+            foreach ($row as $col => $val) {
+                if (property_exists($user, $col)) $user->{$col} = $val;
+            }
+            $user->setId((int) $row['id']);
+            return $user;
+        } catch (PDOException) {
+            return null;
+        }
+    }
+
+    /**
+     * Atualiza nome (e opcionalmente senha) do utilizador.
+     * Retorna true em sucesso.
+     */
+    public function updateProfile(int $id, string $name, ?string $newPassword = null): bool
+    {
+        $pdo = Connect::getInstance();
+        if (!$pdo) return false;
+
+        try {
+            if ($newPassword) {
+                $stmt = $pdo->prepare(
+                    "UPDATE {$this->entity} SET name = :name, password = :pass WHERE id = :id"
+                );
+                $stmt->execute([
+                    ':name' => trim($name),
+                    ':pass' => password_hash($newPassword, PASSWORD_BCRYPT, ['cost' => 12]),
+                    ':id'   => $id,
+                ]);
+            } else {
+                $stmt = $pdo->prepare(
+                    "UPDATE {$this->entity} SET name = :name WHERE id = :id"
+                );
+                $stmt->execute([':name' => trim($name), ':id' => $id]);
+            }
+            return true;
+        } catch (PDOException) {
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza o caminho do avatar do utilizador.
+     */
+    public function updateAvatar(int $id, string $avatarPath): bool
+    {
+        $pdo = Connect::getInstance();
+        if (!$pdo) return false;
+
+        try {
+            $stmt = $pdo->prepare(
+                "UPDATE {$this->entity} SET avatar = :avatar WHERE id = :id"
+            );
+            $stmt->execute([':avatar' => $avatarPath, ':id' => $id]);
+            return true;
+        } catch (PDOException) {
+            return false;
         }
     }
 }

@@ -71,16 +71,42 @@
 
       <!-- User -->
       <?php if ($isLoggedIn): ?>
-        <span class="text-xs hidden md:block" style="color:var(--color-text-muted)">
-          Olá, <?= htmlspecialchars($userLoggedIn ?? '') ?>
-        </span>
-        <a href="<?= CONF_URL_BASE ?>/logout"
-           class="w-10 h-10 rounded-full flex items-center justify-center text-sm
-                  border-none cursor-pointer transition-all duration-200"
-           style="background:var(--color-panel);color:var(--color-text-muted);box-shadow:var(--neu-shadow-sm)"
-           aria-label="Sair" title="Sair">
-          <i class="fa-solid fa-right-from-bracket"></i>
-        </a>
+        <div class="relative group">
+          <?php
+            $avatarUrl = !empty($userAvatar)
+              ? CONF_URL_BASE . '/themes/web/assets/' . htmlspecialchars($userAvatar)
+              : CONF_URL_BASE . '/themes/painel/assets/images/no-avatar.png';
+          ?>
+          <button type="button" class="flex items-center gap-2 px-2 py-1 rounded-full border-none cursor-pointer"
+                  style="background:var(--color-panel);box-shadow:var(--neu-shadow-sm)">
+            <img src="<?= $avatarUrl ?>" alt="Avatar"
+                 class="w-7 h-7 rounded-full object-cover"
+                 style="border:2px solid var(--color-cyan)" />
+            <span class="text-xs hidden md:block" style="color:var(--color-text-muted)">
+              <?= htmlspecialchars($userLoggedIn ?? '') ?>
+            </span>
+            <i class="fa-solid fa-chevron-down text-[0.6rem]" style="color:var(--color-text-muted)"></i>
+          </button>
+          <!-- Dropdown -->
+          <div class="absolute right-0 top-full mt-2 w-44 rounded-xl overflow-hidden opacity-0 pointer-events-none
+                      group-focus-within:opacity-100 group-focus-within:pointer-events-auto
+                      group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-150 z-50"
+               style="background:var(--color-panel);box-shadow:var(--neu-shadow)">
+            <a href="<?= CONF_URL_BASE ?>/perfil"
+               class="flex items-center gap-2 px-4 py-2.5 text-xs hover:bg-white/5 transition-colors"
+               style="color:var(--color-text)">
+              <i class="fa-solid fa-user-gear w-4 text-center" style="color:var(--color-cyan)"></i>
+              Meu Perfil
+            </a>
+            <hr style="border-color:var(--color-border)" />
+            <a href="<?= CONF_URL_BASE ?>/logout"
+               class="flex items-center gap-2 px-4 py-2.5 text-xs hover:bg-white/5 transition-colors"
+               style="color:#f87171">
+              <i class="fa-solid fa-right-from-bracket w-4 text-center"></i>
+              Sair
+            </a>
+          </div>
+        </div>
       <?php else: ?>
         <a href="<?= CONF_URL_BASE ?>/login"
            class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold
@@ -139,25 +165,51 @@
   <main class="max-w-screen-xl mx-auto px-4 sm:px-6 py-10" id="main-content">
 
     <?php if ($isLoggedIn): ?>
-    <!-- Seção exclusiva para utilizadores logados -->
-    <section class="mb-14" aria-labelledby="section-favorites">
-      <div class="flex items-center gap-3 mb-4">
-        <i class="fa-solid fa-heart text-xl" style="color:#f43f5e"></i>
+    <!-- ── Seletor de Categorias (logados) ─── -->
+    <section class="mb-10" aria-labelledby="section-genres">
+      <div class="flex items-center justify-between gap-3 mb-4 flex-wrap">
+        <div class="flex items-center gap-3">
+          <i class="fa-solid fa-sliders text-base" style="color:var(--color-cyan)"></i>
+          <h2 class="font-display text-lg sm:text-xl font-bold tracking-wide"
+              id="section-genres" style="color:var(--color-text)">
+            FILTRAR POR <span style="color:var(--color-cyan)">CATEGORIA</span>
+          </h2>
+        </div>
+        <a href="<?= CONF_URL_BASE ?>/perfil#genres"
+           class="text-xs" style="color:var(--color-text-muted)">
+          <i class="fa-solid fa-gear mr-1"></i>Gerir preferências
+        </a>
+      </div>
+
+      <!-- Chips de género (todos) -->
+      <div class="flex flex-wrap gap-2" id="genre-chips-home">
+        <span class="genre-chip-home active px-3 py-1.5 rounded-full text-xs font-semibold cursor-pointer select-none"
+              data-tmdb=""
+              style="background:var(--color-cyan);color:#fff;box-shadow:var(--glow-cyan)">
+          <i class="fa-solid fa-fire-flame-curved mr-1"></i>Populares
+        </span>
+        <?php foreach ($genres as $g): ?>
+          <?php $preferred = in_array($g['tmdb_id'], $userTmdbIds, true); ?>
+          <span class="genre-chip-home <?= $preferred ? 'preferred' : '' ?> px-3 py-1.5 rounded-full text-xs font-semibold cursor-pointer select-none transition-all duration-150"
+                data-tmdb="<?= $g['tmdb_id'] ?>"
+                style="background:var(--color-bg);color:<?= $preferred ? 'var(--color-amber)' : 'var(--color-text-muted)' ?>;box-shadow:var(--neu-shadow-sm);<?= $preferred ? 'border:1px solid var(--color-amber)' : '' ?>">
+            <?= htmlspecialchars($g['name_pt']) ?>
+          </span>
+        <?php endforeach; ?>
+      </div>
+    </section>
+
+    <!-- Grid filtrado por categoria -->
+    <section class="mb-14" aria-labelledby="section-genre-grid">
+      <div class="flex items-center gap-3 mb-6">
+        <i class="fa-solid fa-film text-xl" style="color:var(--color-cyan)"></i>
         <h2 class="font-display text-xl sm:text-2xl font-bold tracking-wide"
-            id="section-favorites" style="color:var(--color-text)">
-          MEUS <span style="color:var(--color-cyan)">FAVORITOS</span>
+            id="section-genre-grid" style="color:var(--color-text)">
+          <span id="genre-title">POPULARES</span> <span style="color:var(--color-cyan)">DO DIA</span>
         </h2>
       </div>
-      <p class="text-xs mb-4" style="color:var(--color-text-muted)">
-        Olá, <strong style="color:var(--color-cyan)"><?= htmlspecialchars($userLoggedIn ?? '') ?></strong>!
-        Os seus filmes favoritos aparecerão aqui.
-      </p>
       <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4"
-           data-grid="favorites" aria-live="polite">
-        <p class="col-span-full text-sm py-6 text-center" style="color:var(--color-text-muted)">
-          <i class="fa-regular fa-heart mr-1"></i> Nenhum favorito ainda. Clique no coração num filme para guardar.
-        </p>
-      </div>
+           data-grid="genre" aria-live="polite"></div>
     </section>
     <?php endif; ?>
 

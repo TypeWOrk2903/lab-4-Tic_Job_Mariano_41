@@ -6,6 +6,7 @@ require __DIR__ . '/vendor/autoload.php';
 
 use WebMovies\Controllers\Web\WebController;
 use WebMovies\Controllers\Web\AuthController;
+use WebMovies\Controllers\Web\ProfileController;
 use WebMovies\Controllers\Admin\AdminController;
 use WebMovies\Support\Request;
 use WebMovies\Support\Router;
@@ -30,6 +31,11 @@ $router->post('/login',    [AuthController::class, 'loginSubmit']);
 $router->get('/forget',    [AuthController::class, 'forgetForm']);
 $router->post('/forget',   [AuthController::class, 'forgetSubmit']);
 $router->get('/logout',    [AuthController::class, 'logOut']);
+
+// ── Perfil ────────────────────────────────────────
+$router->get('/perfil',         [ProfileController::class, 'show']);
+$router->post('/perfil',        [ProfileController::class, 'update']);
+$router->post('/perfil/genres', [ProfileController::class, 'saveGenres']);
 
 // ── Painel Admin ──────────────────────────────────────
 $router->get('/admin',           [AdminController::class, 'dashboard']);
