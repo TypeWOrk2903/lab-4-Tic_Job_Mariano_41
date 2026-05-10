@@ -58,46 +58,46 @@
   </main>
 
  <script type="module">
-  // Configurações TMDB
-  const API_KEY  = 'SUA_CHAVE_TMDB_AQUI'; // Substitua pela sua chave TMDB
+  const API_KEY  = 'b0e9f75142eb4a69493d8fba03cf29f5';
   const BASE_URL = 'https://api.themoviedb.org/3';
   const IMG_URL  = 'https://image.tmdb.org/t/p/w500';
-  const LANG     = 'pt-BR';
+  const LANG     = localStorage.getItem('wm-lang') || 'pt-BR';
 
   const root     = document.getElementById('movie-detail-root');
-  const imdbId   = root.dataset.imdb; // ID do filme
+  const movieId  = root.dataset.imdb;
   const content  = document.getElementById('detail-content');
   const skeleton = document.getElementById('detail-skeleton');
   const errEl    = document.getElementById('detail-error');
 
   async function load() {
-    if (!imdbId) { 
+    if (!movieId) { 
       skeleton.classList.add('hidden'); 
       errEl.classList.remove('hidden'); 
       return; 
     }
 
     try {
-      // 1. Busca detalhes na TMDB (Usando o ID do filme ou buscando pelo imdb_id)
-      // Nota: Se o 'imdbId' que você passa for o ID da TMDB, use /movie/${id}. 
-      // Se for o ID do IMDb (ex: tt123), usamos o endpoint /find.
-      const response = await fetch(`${BASE_URL}/movie/${imdbId}?api_key=${API_KEY}&language=${LANG}&append_to_response=release_dates`);
+      const response = await fetch(`${BASE_URL}/movie/${movieId}?api_key=${API_KEY}&language=${LANG}&append_to_response=release_dates`);
       const data = await response.json();
 
-      // 2. FILTRO DE SEGURANÇA (TMDB usa 'adult')
       if (!data || data.adult === true || data.status_code === 34) {
         throw new Error('Conteúdo não disponível ou restrito');
       }
 
-      // 3. Preparação de dados
-      const poster = data.poster_path ? `${IMG_URL}${data.poster_path}` : '<?= CONF_URL_BASE ?>/themes/assets/images/no-poster.svg';
+      const noPoster = '<?= CONF_URL_BASE ?>/themes/painel/assets/images/no-poster.png';
+      const poster = data.poster_path ? `${IMG_URL}${data.poster_path}` : noPoster;
       const rating = data.vote_average || 0;
+      const pct    = Math.round(rating * 10);
       const stars  = Math.round(rating / 2);
       const year   = data.release_date ? data.release_date.split('-')[0] : 'N/A';
+      let scoreCls = 'wm-score--rotten';
+      if (pct >= 75) scoreCls = 'wm-score--fresh';
+      else if (pct >= 60) scoreCls = 'wm-score--mixed';
 
-      // 4. Injeção do HTML (Mantendo seu design original)
+      // Injeção do HTML
       content.innerHTML = `
         <img src="${poster}" alt="${data.title}"
+             onerror="this.src='<?= CONF_URL_BASE ?>/themes/painel/assets/images/no-poster.png';this.onerror=null"
              class="rounded-2xl shrink-0 w-48 md:w-60 aspect-[2/3] object-cover self-start"
              style="box-shadow:var(--neu-shadow)" />
              
@@ -116,7 +116,7 @@
           </div>
 
           <div class="flex items-center gap-3">
-            <span class="text-2xl font-bold" style="color:var(--color-amber)">${rating.toFixed(1)}</span>
+            <span class="wm-score wm-score--lg ${scoreCls}">${pct}%</span>
             <span class="text-sm" style="color:var(--color-text-muted)">${'★'.repeat(stars)}${'☆'.repeat(5-stars)} TMDB</span>
             <span class="text-xs px-2 py-0.5 rounded" style="background:var(--color-panel);color:var(--color-text-muted);box-shadow:var(--neu-shadow-sm)">
                 ${data.adult ? '+18' : 'Livre'}

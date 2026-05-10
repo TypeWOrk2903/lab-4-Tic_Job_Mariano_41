@@ -138,6 +138,29 @@
   <!-- ── CATÁLOGO ───────────────────────────────── -->
   <main class="max-w-screen-xl mx-auto px-4 sm:px-6 py-10" id="main-content">
 
+    <?php if ($isLoggedIn): ?>
+    <!-- Seção exclusiva para utilizadores logados -->
+    <section class="mb-14" aria-labelledby="section-favorites">
+      <div class="flex items-center gap-3 mb-4">
+        <i class="fa-solid fa-heart text-xl" style="color:#f43f5e"></i>
+        <h2 class="font-display text-xl sm:text-2xl font-bold tracking-wide"
+            id="section-favorites" style="color:var(--color-text)">
+          MEUS <span style="color:var(--color-cyan)">FAVORITOS</span>
+        </h2>
+      </div>
+      <p class="text-xs mb-4" style="color:var(--color-text-muted)">
+        Olá, <strong style="color:var(--color-cyan)"><?= htmlspecialchars($userLoggedIn ?? '') ?></strong>!
+        Os seus filmes favoritos aparecerão aqui.
+      </p>
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4"
+           data-grid="favorites" aria-live="polite">
+        <p class="col-span-full text-sm py-6 text-center" style="color:var(--color-text-muted)">
+          <i class="fa-regular fa-heart mr-1"></i> Nenhum favorito ainda. Clique no coração num filme para guardar.
+        </p>
+      </div>
+    </section>
+    <?php endif; ?>
+
     <section class="mb-14" aria-labelledby="section-popular">
       <div class="flex items-center gap-3 mb-6">
         <i class="fa-solid fa-fire text-xl" style="color:var(--color-amber)"></i>

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace WebMovies\Controllers\Web;
 
 use WebMovies\Support\Request;
+use WebMovies\Support\Session;
 
 /**
  * WebController — Área pública do WebMovies.
@@ -35,47 +36,48 @@ final class WebController
 
     // ── Acesso à sessão ──────────────────────────────────────────────────
 
-    private function startSession(): void
+    private function session(): Session
     {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
+        return new Session();
     }
 
     private function isLoggedIn(): bool
     {
-        $this->startSession();
-        return !empty($_SESSION['user_id']);
+        return $this->session()->isLoggedIn();
     }
 
     // ── Rotas públicas ───────────────────────────────────────────────────
 
     /**
-     * GET /
+     * GET /   e   GET /home
      */
     public function home(Request $request): void
     {
         $this->view('home', [
             'pageTitle'    => 'WebMovies – Recomendações de Filmes',
             'isLoggedIn'   => $this->isLoggedIn(),
-            'userLoggedIn' => $_SESSION['user_name'] ?? null,
+            'userLoggedIn' => $this->session()->get('user_name'),
         ]);
     }
 
     /**
-     * GET /filme?id=...
+     * GET /filme?id=<masked>
+     * Decodifica o ID mascarado antes de passar para a view.
      */
     public function movieDetail(Request $request): void
     {
-        $imdbId = htmlspecialchars(
-            strip_tags($_GET['id'] ?? ''),
-            ENT_QUOTES,
-            'UTF-8'
-        );
+        $masked  = strip_tags($_GET['id'] ?? '');
+        $movieId = unmaskMovieId($masked);
+
+        if (!$movieId) {
+            http_response_code(404);
+            header('Location: ' . CONF_URL_BASE . '/');
+            exit;
+        }
 
         $this->view('movie-detail', [
             'pageTitle'  => 'Detalhes do Filme | WebMovies',
-            'imdbId'     => $imdbId,
+            'imdbId'     => $movieId,
             'isLoggedIn' => $this->isLoggedIn(),
         ]);
     }

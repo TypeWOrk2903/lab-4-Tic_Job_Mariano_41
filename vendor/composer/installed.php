@@ -3,7 +3,7 @@
         'name' => 'webmovies/app',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => '68b134a1d65cb39f6b8b12757ace888b001ac727',
+        'reference' => '653a31bf20fd32e6f824412cbca6317b6ccc028f',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         'webmovies/app' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => '68b134a1d65cb39f6b8b12757ace888b001ac727',
+            'reference' => '653a31bf20fd32e6f824412cbca6317b6ccc028f',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

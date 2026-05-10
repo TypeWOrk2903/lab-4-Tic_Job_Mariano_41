@@ -6,6 +6,7 @@ namespace WebMovies\Controllers\Web;
 
 use WebMovies\Models\User;
 use WebMovies\Support\Request;
+use WebMovies\Support\Session;
 
 /**
  * AuthController — Autenticação da área pública.
@@ -23,17 +24,14 @@ final class AuthController
 {
     // ── Sessão ───────────────────────────────────────────────────────────
 
-    private function startSession(): void
+    private function session(): Session
     {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
+        return new Session();
     }
 
     private function isLoggedIn(): bool
     {
-        $this->startSession();
-        return !empty($_SESSION['user_id']);
+        return $this->session()->isLoggedIn();
     }
 
     // ── View helper ──────────────────────────────────────────────────────
@@ -63,24 +61,22 @@ final class AuthController
     public function registerForm(Request $request): void
     {
         if ($this->isLoggedIn()) {
-            $this->redirect('/');
+            $this->redirect('/home');
         }
 
-        $this->startSession();
+        $s = $this->session();
         $this->view('register', [
             'pageTitle' => 'Criar Conta | WebMovies',
-            'error'     => $_SESSION['auth_error'] ?? null,
-            'success'   => $_SESSION['auth_success'] ?? null,
-            'old'       => $_SESSION['auth_old'] ?? [],
+            'error'     => $s->get('auth_error'),
+            'success'   => $s->get('auth_success'),
+            'old'       => $s->get('auth_old') ?? [],
         ]);
 
-        unset($_SESSION['auth_error'], $_SESSION['auth_success'], $_SESSION['auth_old']);
+        $s->remove('auth_error')->remove('auth_success')->remove('auth_old');
     }
 
     public function registerSubmit(Request $request): void
     {
-        $this->startSession();
-
         $name    = trim($_POST['name']     ?? '');
         $email   = trim($_POST['email']    ?? '');
         $pass    = $_POST['password']      ?? '';
@@ -135,7 +131,7 @@ final class AuthController
         }
 
         $this->createSession($newUser);
-        $this->redirect('/admin');
+        $this->redirect('/home');
     }
 
     // ── Login ─────────────────────────────────────────────────────────────
@@ -143,25 +139,23 @@ final class AuthController
     public function loginForm(Request $request): void
     {
         if ($this->isLoggedIn()) {
-            $this->redirect('/');
+            $this->redirect('/home');
         }
 
-        $this->startSession();
+        $s = $this->session();
         $this->view('login', [
-            'pageTitle'       => 'Entrar | WebMovies',
-            'error'           => $_SESSION['auth_error'] ?? null,
-            'old'             => $_SESSION['auth_old'] ?? [],
-            'showForgetLink'  => ($_SESSION['login_attempts'] ?? 0) >= 3,
+            'pageTitle'      => 'Entrar | WebMovies',
+            'error'          => $s->get('auth_error'),
+            'old'            => $s->get('auth_old') ?? [],
+            'showForgetLink' => $s->loginAttempts() >= 3,
         ]);
 
-        unset($_SESSION['auth_error'], $_SESSION['auth_old']);
+        $s->remove('auth_error')->remove('auth_old');
     }
 
     public function loginSubmit(Request $request): void
     {
-        $this->startSession();
-
-        $email = trim($_POST['email']    ?? '');
+        $email = trim($_POST['email']    ?? '');    
         $pass  = $_POST['password']      ?? '';
 
         if (!filter_var($email, FILTER_VALIDATE_EMAIL) || $pass === '') {
@@ -172,17 +166,16 @@ final class AuthController
         $user = (new User())->auth($email, $pass);
 
         if (!$user) {
-            // Incrementa contador de tentativas
-            $_SESSION['login_attempts'] = ($_SESSION['login_attempts'] ?? 0) + 1;
-            // Mensagem genérica — não revela se o e-mail existe (OWASP A07)
+            // Incrementa contador de tentativas — mensagem genérica (OWASP A07)
+            $this->session()->incrementLoginAttempts();
             $this->flashError('E-mail ou senha incorretos.', ['email' => $email]);
             $this->redirect('/login');
         }
 
         // Reset do contador após login bem-sucedido
-        unset($_SESSION['login_attempts']);
+        $this->session()->resetLoginAttempts();
         $this->createSession($user);
-        $this->redirect('/admin');
+        $this->redirect('/home');
     }
 
     // ── Recuperação de senha ──────────────────────────────────────────────
@@ -193,20 +186,18 @@ final class AuthController
             $this->redirect('/');
         }
 
-        $this->startSession();
+        $s = $this->session();
         $this->view('forget', [
             'pageTitle' => 'Recuperar Senha | WebMovies',
-            'error'     => $_SESSION['auth_error']   ?? null,
-            'success'   => $_SESSION['auth_success'] ?? null,
+            'error'     => $s->get('auth_error'),
+            'success'   => $s->get('auth_success'),
         ]);
 
-        unset($_SESSION['auth_error'], $_SESSION['auth_success']);
+        $s->remove('auth_error')->remove('auth_success');
     }
 
     public function forgetSubmit(Request $request): void
     {
-        $this->startSession();
-
         $email = trim($_POST['email'] ?? '');
 
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -218,7 +209,7 @@ final class AuthController
         (new User())->generateForgetToken($email);
 
         // Resposta sempre genérica — previne enumeração de e-mails (OWASP A07)
-        $_SESSION['auth_success'] = 'Se este e-mail estiver cadastrado, você receberá as instruções em breve.';
+        $this->session()->set('auth_success', 'Se este e-mail estiver cadastrado, você receberá as instruções em breve.');
         $this->redirect('/forget');
     }
 
@@ -226,8 +217,7 @@ final class AuthController
 
     public function logOut(Request $request): void
     {
-        $this->startSession();
-        session_destroy();
+        $this->session()->logout();
         $this->redirect('/');
     }
 
@@ -240,11 +230,12 @@ final class AuthController
      */
     private function createSession(User $user): void
     {
-        $_SESSION['user_id']         = $user->id;
-        $_SESSION['user_name']       = $user->name;
-        $_SESSION['user_email']      = $user->email;
-        $_SESSION['user_role']       = 'admin';
-        $_SESSION['parental_filter'] = true;
+        $this->session()->login([
+            'id'    => $user->id,
+            'name'  => $user->name,
+            'email' => $user->email,
+            'role'  => 'admin',
+        ])->set('parental_filter', true);
     }
 
     /**
@@ -252,8 +243,7 @@ final class AuthController
      */
     private function flashError(string $message, array $old = []): void
     {
-        $_SESSION['auth_error'] = $message;
-        $_SESSION['auth_old']   = $old;
+        $this->session()->set('auth_error', $message)->set('auth_old', $old);
     }
 
     /**

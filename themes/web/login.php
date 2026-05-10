@@ -40,7 +40,7 @@
       </div>
       <?php endif; ?>
 
-      <form method="POST" action="<?= CONF_URL_BASE ?>/login" novalidate>
+      <form method="POST" action="<?= CONF_URL_BASE ?>/login" >
 
         <!-- E-mail -->
         <div class="mb-4">

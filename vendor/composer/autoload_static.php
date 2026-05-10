@@ -8,6 +8,7 @@ class ComposerStaticInitc373c8cdef6849f6ead6819aa587a082
 {
     public static $files = array (
         '07cbd858d0ee16841c22d2d227fa1ee2' => __DIR__ . '/../..' . '/source/support/config.php',
+        'e7b394fa4ffb373bf1c9906fd8feb2cd' => __DIR__ . '/../..' . '/source/support/helpers.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -47,12 +48,14 @@ class ComposerStaticInitc373c8cdef6849f6ead6819aa587a082
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'WebMovies\\Controllers\\Admin\\AdminController' => __DIR__ . '/../..' . '/source/Controllers/Admin/AdminController.php',
-        'WebMovies\\Controllers\\HomeController' => __DIR__ . '/../..' . '/source/Controllers/HomeController.php',
+        'WebMovies\\Controllers\\Web\\AuthController' => __DIR__ . '/../..' . '/source/Controllers/Web/AuthController.php',
         'WebMovies\\Controllers\\Web\\WebController' => __DIR__ . '/../..' . '/source/Controllers/Web/WebController.php',
         'WebMovies\\Models\\Model' => __DIR__ . '/../..' . '/source/models/Model.php',
+        'WebMovies\\Models\\User' => __DIR__ . '/../..' . '/source/models/User.php',
         'WebMovies\\Support\\Connect' => __DIR__ . '/../..' . '/source/support/Connect.php',
         'WebMovies\\Support\\Request' => __DIR__ . '/../..' . '/source/support/Request.php',
         'WebMovies\\Support\\Router' => __DIR__ . '/../..' . '/source/support/Router.php',
+        'WebMovies\\Support\\Session' => __DIR__ . '/../..' . '/source/support/Session.php',
     );
 
     public static function getInitializer(ClassLoader $loader)

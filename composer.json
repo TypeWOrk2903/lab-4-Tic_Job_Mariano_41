@@ -7,7 +7,8 @@
   },
   "autoload": {
     "files": [
-      "source/support/config.php"
+      "source/support/config.php",
+       "source/support/helpers.php"
     ],
     "psr-4": {
       "WebMovies\\Controllers\\": "source/Controllers/",

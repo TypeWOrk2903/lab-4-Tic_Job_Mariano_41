@@ -7,6 +7,7 @@ const API_KEY       = 'b0e9f75142eb4a69493d8fba03cf29f5';
 const BASE_URL      = 'https://api.themoviedb.org/3';
 const IMG_BASE      = 'https://image.tmdb.org/t/p/w500';
 const BACKDROP_BASE = 'https://image.tmdb.org/t/p/original';
+const CONF_URL_BASE = `${location.protocol}//${location.host}/WebMovies`;
 // IDs de Gêneros bloqueados (27 = Horror, 53 = Thriller)
 const BLOCKED_GENRES = [27, 53];
 
@@ -129,9 +130,10 @@ function buildCard(movie) {
 
     const article = document.createElement('article');
     article.className = 'wm-card';
-    
-    // Cursor pointer para indicar que é clicável
     article.style.cursor = 'pointer';
+    article.setAttribute('role', 'button');
+    article.setAttribute('tabindex', '0');
+    article.setAttribute('aria-label', title);
 
     article.innerHTML = `
         <div class="wm-card__poster">
@@ -149,30 +151,30 @@ function buildCard(movie) {
             </div>
         </div>`;
 
-    // 1. Configuração da Imagem e Textos
+    // Configuração da Imagem e Textos
     const img = article.querySelector('img');
-    img.src = movie.poster_path ? `${IMG_BASE}${movie.poster_path}` : 'URL_DA_SUA_IMAGEM_PADRAO';
+    img.src = movie.poster_path
+        ? `${IMG_BASE}${movie.poster_path}`
+        : `${CONF_URL_BASE}/themes/painel/assets/images/no-poster.png`;
     img.alt = title;
+    img.onerror = () => { img.src = `${CONF_URL_BASE}/themes/painel/assets/images/no-poster.png`; img.onerror = null; };
     article.querySelector('.wm-card__title').textContent = title;
     article.querySelector('.wm-card__year').textContent  = year;
     article.querySelectorAll('.wm-tag').forEach((el, i) => {
         el.textContent = genreNames[i];
     });
 
-    // 2. Lógica do Clique com Mascaramento de ID (URL Safe)
-    article.addEventListener('click', () => {
-        const salt = "webmovies_ipil_2026"; // O mesmo salt do PHP!
-        const rawData = `${movie.id}|${salt}`;
-        
-        // btoa gera o base64, e o replace limpa para ser aceito na URL (URL Safe)
-        const maskedId = btoa(rawData)
+    // Navega para a página de detalhe com ID mascarado (mesmo salt do PHP helpers.php)
+    const goToDetail = () => {
+        const salt   = 'webmovies_ipil_2026';
+        const masked = btoa(`${movie.id}|${salt}`)
             .replace(/\+/g, '-')
             .replace(/\//g, '_')
-            .replace(/=+$/, ''); 
-
-        // Redireciona para a rota configurada no PHP
-        window.location.href = `${CONF_URL_BASE}/filme/${maskedId}`;
-    });
+            .replace(/=+$/, '');
+        window.location.href = `${CONF_URL_BASE}/filme?id=${masked}`;
+    };
+    article.addEventListener('click', goToDetail);
+    article.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); goToDetail(); } });
 
     return article;
 }
@@ -198,6 +200,13 @@ function applyHero(movie) {
         bg.src = `${BACKDROP_BASE}${movie.backdrop_path}`;
         bg.onload = () => { bg.style.opacity = '.4'; };
         bg.alt = movie.title || '';
+        bg.style.cursor = 'pointer';
+        bg.onclick = () => {
+            const salt   = 'webmovies_ipil_2026';
+            const masked = btoa(`${movie.id}|${salt}`)
+                .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+            window.location.href = `${CONF_URL_BASE}/filme?id=${masked}`;
+        };
     }
     if (title) title.textContent = movie.title || movie.name || '';
     if (syn)   syn.textContent   = movie.overview || '';

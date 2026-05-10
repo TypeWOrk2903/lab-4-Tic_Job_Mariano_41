@@ -7,4 +7,5 @@ $baseDir = dirname($vendorDir);
 
 return array(
     '07cbd858d0ee16841c22d2d227fa1ee2' => $baseDir . '/source/support/config.php',
+    'e7b394fa4ffb373bf1c9906fd8feb2cd' => $baseDir . '/source/support/helpers.php',
 );
