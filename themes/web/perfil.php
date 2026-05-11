@@ -60,7 +60,7 @@ $avatarUrl = !empty($user->avatar)
               style="background:var(--color-panel);color:var(--color-text);box-shadow:var(--neu-shadow-sm)"
               aria-label="Alternar tema"></button>
       <a href="<?= CONF_URL_BASE ?>/home" class="text-xs" style="color:var(--color-text-muted)">
-        <i class="fa-solid fa-arrow-left mr-1"></i> Voltar
+        <i class="fa-solid fa-arrow-left mr-1"></i> <span data-i18n="profile.back">Voltar</span>
       </a>
       <a href="<?= CONF_URL_BASE ?>/logout" class="text-xs" style="color:var(--color-text-muted)"
          title="Sair"><i class="fa-solid fa-right-from-bracket"></i></a>
@@ -71,7 +71,7 @@ $avatarUrl = !empty($user->avatar)
 
     <!-- ── Título ── -->
     <h1 class="font-display text-2xl sm:text-3xl font-bold" style="color:var(--color-text)">
-      MEU <span style="color:var(--color-cyan)">PERFIL</span>
+      MEU <span style="color:var(--color-cyan)" data-i18n="profile.title">PERFIL</span>
     </h1>
 
     <!-- ── Feedback ── -->
@@ -94,7 +94,7 @@ $avatarUrl = !empty($user->avatar)
     <section class="rounded-2xl p-6 space-y-6"
              style="background:var(--color-panel);box-shadow:var(--neu-shadow)">
       <h2 class="font-display text-lg font-bold tracking-wide" style="color:var(--color-text)">
-        <i class="fa-solid fa-user mr-2" style="color:var(--color-cyan)"></i>Dados Pessoais
+        <i class="fa-solid fa-user mr-2" style="color:var(--color-cyan)"></i><span data-i18n="profile.info_title">Dados Pessoais</span>
       </h2>
 
       <form method="POST" action="<?= CONF_URL_BASE ?>/perfil" enctype="multipart/form-data"
@@ -105,7 +105,7 @@ $avatarUrl = !empty($user->avatar)
           <img id="avatar-preview" src="<?= $avatarUrl ?>" alt="Avatar"
                class="w-24 h-24 rounded-full object-cover wm-avatar-ring" />
           <div class="flex flex-col gap-2">
-            <label class="text-xs font-semibold" style="color:var(--color-text-muted)">
+            <label class="text-xs font-semibold" style="color:var(--color-text-muted)" data-i18n="profile.avatar_title">
               Foto de perfil (JPG, PNG ou WebP · máx. 2 MB)
             </label>
             <label class="inline-flex items-center gap-2 cursor-pointer px-4 py-2 rounded-full text-xs font-bold"
@@ -119,7 +119,7 @@ $avatarUrl = !empty($user->avatar)
 
         <!-- Nome -->
         <div class="flex flex-col gap-1.5">
-          <label class="text-xs font-semibold" style="color:var(--color-text-muted)" for="name">Nome</label>
+          <label class="text-xs font-semibold" style="color:var(--color-text-muted)" for="name" data-i18n="profile.name_label">Nome</label>
           <input type="text" id="name" name="name"
                  value="<?= htmlspecialchars($user->name ?? '') ?>"
                  class="wm-input w-full px-4 py-2.5 rounded-xl text-sm outline-none"
@@ -129,7 +129,7 @@ $avatarUrl = !empty($user->avatar)
 
         <!-- E-mail (só leitura) -->
         <div class="flex flex-col gap-1.5">
-          <label class="text-xs font-semibold" style="color:var(--color-text-muted)">E-mail</label>
+          <label class="text-xs font-semibold" style="color:var(--color-text-muted)" data-i18n="profile.email_label">E-mail</label>
           <p class="px-4 py-2.5 rounded-xl text-sm" style="color:var(--color-text-muted);background:var(--color-bg);border:1.5px solid var(--color-border)">
             <?= htmlspecialchars($user->email ?? '') ?>
           </p>
@@ -139,7 +139,7 @@ $avatarUrl = !empty($user->avatar)
         <div class="grid sm:grid-cols-2 gap-4">
           <div class="flex flex-col gap-1.5">
             <label class="text-xs font-semibold" style="color:var(--color-text-muted)" for="password">
-              Nova Senha <span style="color:var(--color-text-muted)">(opcional)</span>
+              <span data-i18n="profile.pass_label">Nova Senha</span> <span style="color:var(--color-text-muted)">(opcional)</span>
             </label>
             <input type="password" id="password" name="password" autocomplete="new-password"
                    class="wm-input w-full px-4 py-2.5 rounded-xl text-sm outline-none"
@@ -147,7 +147,7 @@ $avatarUrl = !empty($user->avatar)
                    placeholder="8+ chars, A-Z, a-z, 0-9" />
           </div>
           <div class="flex flex-col gap-1.5">
-            <label class="text-xs font-semibold" style="color:var(--color-text-muted)" for="confirm">
+            <label class="text-xs font-semibold" style="color:var(--color-text-muted)" for="confirm" data-i18n="profile.confirm_label">
               Confirmar Senha
             </label>
             <input type="password" id="confirm" name="confirm" autocomplete="new-password"
@@ -159,7 +159,7 @@ $avatarUrl = !empty($user->avatar)
         <button type="submit"
                 class="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-bold uppercase"
                 style="background:var(--color-cyan);color:#fff;box-shadow:var(--glow-cyan)">
-          <i class="fa-solid fa-floppy-disk"></i> Guardar Alterações
+          <i class="fa-solid fa-floppy-disk"></i> <span data-i18n="profile.save">Guardar Alterações</span>
         </button>
       </form>
     </section>
@@ -168,9 +168,9 @@ $avatarUrl = !empty($user->avatar)
     <section id="genres" class="rounded-2xl p-6 space-y-5"
              style="background:var(--color-panel);box-shadow:var(--neu-shadow)">
       <h2 class="font-display text-lg font-bold tracking-wide" style="color:var(--color-text)">
-        <i class="fa-solid fa-film mr-2" style="color:var(--color-amber)"></i>Géneros Favoritos
+        <i class="fa-solid fa-film mr-2" style="color:var(--color-amber)"></i><span data-i18n="profile.genres_title">Géneros Favoritos</span>
       </h2>
-      <p class="text-xs" style="color:var(--color-text-muted)">
+      <p class="text-xs" style="color:var(--color-text-muted)" data-i18n="profile.genres_hint">
         Selecione os géneros que prefere — a página inicial mostrará filmes dessas categorias.
       </p>
 
@@ -199,7 +199,7 @@ $avatarUrl = !empty($user->avatar)
         <button type="submit"
                 class="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-bold uppercase"
                 style="background:var(--color-amber);color:#fff;box-shadow:var(--glow-amber)">
-          <i class="fa-solid fa-heart"></i> Guardar Géneros
+          <i class="fa-solid fa-heart"></i> <span data-i18n="profile.genres_save">Guardar Géneros</span>
         </button>
       </form>
     </section>

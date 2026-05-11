@@ -24,7 +24,7 @@
         <span style="color:var(--color-text)">Web</span>
         <span style="color:var(--color-cyan)">Movies</span>
       </a>
-      <p class="mt-2 text-sm" style="color:var(--color-text-muted)">
+      <p class="mt-2 text-sm" style="color:var(--color-text-muted)" data-i18n="register.subtitle">
         Crie sua conta e descubra filmes personalizados para você.
       </p>
     </div>
@@ -53,7 +53,7 @@
         <!-- Nome -->
         <div class="mb-4">
           <label for="name" class="block text-xs font-semibold mb-1.5 tracking-wide uppercase"
-                 style="color:var(--color-text-muted)">Nome Completo</label>
+                 style="color:var(--color-text-muted)" data-i18n="register.name_label">Nome Completo</label>
           <div class="relative">
             <i class="fa-solid fa-user absolute left-3 top-1/2 -translate-y-1/2 text-xs pointer-events-none"
                style="color:var(--color-text-muted)"></i>
@@ -62,14 +62,14 @@
                    class="w-full pl-9 pr-4 py-2.5 rounded-lg text-sm outline-none transition-shadow duration-200"
                    style="background:var(--color-bg);color:var(--color-text);
                           border:1.5px solid var(--color-border);box-shadow:var(--neu-shadow-inset)"
-                   placeholder="Seu nome completo" />
+                   placeholder="Seu nome completo" data-i18n-placeholder="register.name_ph" />
           </div>
         </div>
 
         <!-- E-mail -->
         <div class="mb-4">
           <label for="email" class="block text-xs font-semibold mb-1.5 tracking-wide uppercase"
-                 style="color:var(--color-text-muted)">E-mail</label>
+                 style="color:var(--color-text-muted)" data-i18n="register.email_label">E-mail</label>
           <div class="relative">
             <i class="fa-solid fa-envelope absolute left-3 top-1/2 -translate-y-1/2 text-xs pointer-events-none"
                style="color:var(--color-text-muted)"></i>
@@ -85,7 +85,7 @@
         <!-- Senha -->
         <div class="mb-4">
           <label for="password" class="block text-xs font-semibold mb-1.5 tracking-wide uppercase"
-                 style="color:var(--color-text-muted)">Senha</label>
+                 style="color:var(--color-text-muted)" data-i18n="register.pass_label">Senha</label>
           <div class="relative">
             <i class="fa-solid fa-lock absolute left-3 top-1/2 -translate-y-1/2 text-xs pointer-events-none"
                style="color:var(--color-text-muted)"></i>
@@ -93,14 +93,14 @@
                    class="w-full pl-9 pr-4 py-2.5 rounded-lg text-sm outline-none transition-shadow duration-200"
                    style="background:var(--color-bg);color:var(--color-text);
                           border:1.5px solid var(--color-border);box-shadow:var(--neu-shadow-inset)"
-                   placeholder="Min. 8 chars, A-Z, a-z, 0-9" />
+                   placeholder="Min. 8 chars, A-Z, a-z, 0-9" data-i18n-placeholder="register.pass_ph" />
           </div>
         </div>
 
         <!-- Confirmar Senha -->
         <div class="mb-6">
           <label for="confirm" class="block text-xs font-semibold mb-1.5 tracking-wide uppercase"
-                 style="color:var(--color-text-muted)">Confirmar Senha</label>
+                 style="color:var(--color-text-muted)" data-i18n="register.confirm_label">Confirmar Senha</label>
           <div class="relative">
             <i class="fa-solid fa-lock-open absolute left-3 top-1/2 -translate-y-1/2 text-xs pointer-events-none"
                style="color:var(--color-text-muted)"></i>
@@ -108,7 +108,7 @@
                    class="w-full pl-9 pr-4 py-2.5 rounded-lg text-sm outline-none transition-shadow duration-200"
                    style="background:var(--color-bg);color:var(--color-text);
                           border:1.5px solid var(--color-border);box-shadow:var(--neu-shadow-inset)"
-                   placeholder="Repita a senha" />
+                   placeholder="Repita a senha" data-i18n-placeholder="register.confirm_ph" />
           </div>
         </div>
 
@@ -116,29 +116,32 @@
                 class="w-full py-2.5 rounded-full text-sm font-bold uppercase tracking-wider
                        cursor-pointer border-none hover:brightness-110 active:scale-95 transition-all duration-150"
                 style="background:var(--color-cyan);color:#fff;box-shadow:var(--glow-cyan)">
-          <i class="fa-solid fa-user-plus mr-1"></i> Criar Conta
+          <i class="fa-solid fa-user-plus mr-1"></i> <span data-i18n="register.submit">Criar Conta</span>
         </button>
 
       </form>
     </div>
 
     <p class="text-center mt-6 text-xs" style="color:var(--color-text-muted)">
-      Já tem uma conta?
-      <a href="<?= CONF_URL_BASE ?>/login" style="color:var(--color-cyan)" class="hover:underline font-semibold">
+      <span data-i18n="register.has_account">Já tem uma conta?</span>
+      <a href="<?= CONF_URL_BASE ?>/login" style="color:var(--color-cyan)" class="hover:underline font-semibold" data-i18n="register.login_link">
         Entrar
       </a>
     </p>
     <p class="text-center mt-2">
       <a href="<?= CONF_URL_BASE ?>/" class="text-xs" style="color:var(--color-text-subtle)">
-        <i class="fa-solid fa-arrow-left text-[0.6rem]"></i> Voltar ao catálogo
+        <i class="fa-solid fa-arrow-left text-[0.6rem]"></i> <span data-i18n="register.back">Voltar ao catálogo</span>
       </a>
     </p>
   </div>
 
   <script>
-    // Aplica tema do localStorage sem flash
-    const t = localStorage.getItem('wm-theme');
-    if (t) { document.body.classList.remove('dark-theme','light-theme'); document.body.classList.add(t); }
+    const _t = localStorage.getItem('wm-theme');
+    if (_t) { document.body.classList.remove('dark-theme','light-theme'); document.body.classList.add(_t); }
+  </script>
+  <script type="module">
+    import { applyI18n } from '<?= CONF_URL_BASE ?>/themes/painel/assets/js/translations.js';
+    document.addEventListener('DOMContentLoaded', () => applyI18n());
   </script>
 </body>
 </html>

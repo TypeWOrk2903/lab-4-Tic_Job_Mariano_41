@@ -231,10 +231,11 @@ final class AuthController
     private function createSession(User $user): void
     {
         $this->session()->login([
-            'id'    => $user->id,
-            'name'  => $user->name,
-            'email' => $user->email,
-            'role'  => 'admin',
+            'id'     => $user->id,
+            'name'   => $user->name,
+            'email'  => $user->email,
+            'role'   => 'admin',
+            'avatar' => $user->avatar,
         ])->set('parental_filter', true);
     }
 

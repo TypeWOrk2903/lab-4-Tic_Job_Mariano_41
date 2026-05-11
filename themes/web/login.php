@@ -24,7 +24,7 @@
         <span style="color:var(--color-text)">Web</span>
         <span style="color:var(--color-cyan)">Movies</span>
       </a>
-      <p class="mt-2 text-sm" style="color:var(--color-text-muted)">
+      <p class="mt-2 text-sm" style="color:var(--color-text-muted)" data-i18n="login.subtitle">
         Entre para favoritar e receber recomendações personalizadas.
       </p>
     </div>
@@ -45,7 +45,7 @@
         <!-- E-mail -->
         <div class="mb-4">
           <label for="email" class="block text-xs font-semibold mb-1.5 tracking-wide uppercase"
-                 style="color:var(--color-text-muted)">E-mail</label>
+                 style="color:var(--color-text-muted)" data-i18n="login.email_label">E-mail</label>
           <div class="relative">
             <i class="fa-solid fa-envelope absolute left-3 top-1/2 -translate-y-1/2 text-xs pointer-events-none"
                style="color:var(--color-text-muted)"></i>
@@ -61,11 +61,11 @@
         <div class="mb-6">
           <div class="flex items-center justify-between mb-1.5">
             <label for="password" class="block text-xs font-semibold tracking-wide uppercase"
-                   style="color:var(--color-text-muted)">Senha</label>
+                   style="color:var(--color-text-muted)" data-i18n="login.pass_label">Senha</label>
             <?php if (!empty($showForgetLink)): ?>
             <a href="<?= CONF_URL_BASE ?>/forget"
                class="text-xs hover:underline"
-               style="color:var(--color-cyan)">
+               style="color:var(--color-cyan)" data-i18n="login.forgot">
               <i class="fa-solid fa-key fa-xs"></i> Esqueci a senha
             </a>
             <?php endif; ?>
@@ -85,27 +85,31 @@
                 class="w-full py-2.5 rounded-full text-sm font-bold uppercase tracking-wider
                        cursor-pointer border-none hover:brightness-110 active:scale-95 transition-all duration-150"
                 style="background:var(--color-cyan);color:#fff;box-shadow:0 4px 12px rgba(0,255,255,0.25)">
-          <i class="fa-solid fa-right-to-bracket mr-1"></i> Entrar
+          <i class="fa-solid fa-right-to-bracket mr-1"></i> <span data-i18n="login.submit">Entrar</span>
         </button>
 
       </form>
     </div>
 
     <p class="text-center mt-6 text-xs" style="color:var(--color-text-muted)">
-      Ainda não tem conta?
-      <a href="<?=CONF_URL_BASE?>/register" style="color:var(--color-cyan)" class="hover:underline">Cadastre-se</a>
+      <span data-i18n="login.no_account">Ainda não tem conta?</span>
+      <a href="<?=CONF_URL_BASE?>/register" style="color:var(--color-cyan)" class="hover:underline" data-i18n="login.register_link">Cadastre-se</a>
     </p>
     <p class="text-center mt-2">
       <a href="<?= CONF_URL_BASE ?>/" class="text-xs" style="color:var(--color-text-subtle)">
-        <i class="fa-solid fa-arrow-left text-[0.6rem]"></i> Voltar ao catálogo
+        <i class="fa-solid fa-arrow-left text-[0.6rem]"></i> <span data-i18n="login.back">Voltar ao catálogo</span>
       </a>
     </p>
   </div>
 
   <script>
-    // Aplica dark-theme do localStorage antes do flash
-    const t = localStorage.getItem('wm-theme');
-    if (t) { document.body.classList.remove('dark-theme','light-theme'); document.body.classList.add(t); }
+    // Tema + i18n
+    const _t = localStorage.getItem('wm-theme');
+    if (_t) { document.body.classList.remove('dark-theme','light-theme'); document.body.classList.add(_t); }
+  </script>
+  <script type="module">
+    import { applyI18n } from '<?= CONF_URL_BASE ?>/themes/painel/assets/js/translations.js';
+    document.addEventListener('DOMContentLoaded', () => applyI18n());
   </script>
 </body>
 </html>

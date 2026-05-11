@@ -24,7 +24,7 @@
         <span style="color:var(--color-text)">Web</span>
         <span style="color:var(--color-cyan)">Movies</span>
       </a>
-      <p class="mt-2 text-sm" style="color:var(--color-text-muted)">
+      <p class="mt-2 text-sm" style="color:var(--color-text-muted)" data-i18n="forget.subtitle">
         Informe seu e-mail e enviaremos as instruções de recuperação.
       </p>
     </div>
@@ -54,7 +54,7 @@
         <!-- E-mail -->
         <div class="mb-6">
           <label for="email" class="block text-xs font-semibold mb-1.5 tracking-wide uppercase"
-                 style="color:var(--color-text-muted)">E-mail cadastrado</label>
+                 style="color:var(--color-text-muted)" data-i18n="forget.email_label">E-mail cadastrado</label>
           <div class="relative">
             <i class="fa-solid fa-envelope absolute left-3 top-1/2 -translate-y-1/2 text-xs pointer-events-none"
                style="color:var(--color-text-muted)"></i>
@@ -70,7 +70,7 @@
                 class="w-full py-2.5 rounded-full text-sm font-bold uppercase tracking-wider
                        cursor-pointer border-none hover:brightness-110 active:scale-95 transition-all duration-150"
                 style="background:var(--color-cyan);color:#fff;box-shadow:var(--glow-cyan)">
-          <i class="fa-solid fa-paper-plane mr-1"></i> Enviar Instruções
+          <i class="fa-solid fa-paper-plane mr-1"></i> <span data-i18n="forget.submit">Enviar Instruções</span>
         </button>
 
       </form>
@@ -79,21 +79,25 @@
     </div>
 
     <p class="text-center mt-6 text-xs" style="color:var(--color-text-muted)">
-      Lembrou a senha?
-      <a href="<?= CONF_URL_BASE ?>/login" style="color:var(--color-cyan)" class="hover:underline font-semibold">
+      <span data-i18n="forget.remembered">Lembrou a senha?</span>
+      <a href="<?= CONF_URL_BASE ?>/login" style="color:var(--color-cyan)" class="hover:underline font-semibold" data-i18n="forget.login_link">
         Voltar ao login
       </a>
     </p>
     <p class="text-center mt-2">
       <a href="<?= CONF_URL_BASE ?>/" class="text-xs" style="color:var(--color-text-subtle)">
-        <i class="fa-solid fa-arrow-left text-[0.6rem]"></i> Voltar ao catálogo
+        <i class="fa-solid fa-arrow-left text-[0.6rem]"></i> <span data-i18n="forget.back">Voltar ao catálogo</span>
       </a>
     </p>
   </div>
 
   <script>
-    const t = localStorage.getItem('wm-theme');
-    if (t) { document.body.classList.remove('dark-theme','light-theme'); document.body.classList.add(t); }
+    const _t = localStorage.getItem('wm-theme');
+    if (_t) { document.body.classList.remove('dark-theme','light-theme'); document.body.classList.add(_t); }
+  </script>
+  <script type="module">
+    import { applyI18n } from '<?= CONF_URL_BASE ?>/themes/painel/assets/js/translations.js';
+    document.addEventListener('DOMContentLoaded', () => applyI18n());
   </script>
 </body>
 </html>

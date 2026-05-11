@@ -7,6 +7,7 @@ require __DIR__ . '/vendor/autoload.php';
 use WebMovies\Controllers\Web\WebController;
 use WebMovies\Controllers\Web\AuthController;
 use WebMovies\Controllers\Web\ProfileController;
+use WebMovies\Controllers\Web\ApiController;
 use WebMovies\Controllers\Admin\AdminController;
 use WebMovies\Support\Request;
 use WebMovies\Support\Router;
@@ -36,6 +37,15 @@ $router->get('/logout',    [AuthController::class, 'logOut']);
 $router->get('/perfil',         [ProfileController::class, 'show']);
 $router->post('/perfil',        [ProfileController::class, 'update']);
 $router->post('/perfil/genres', [ProfileController::class, 'saveGenres']);
+
+// ── API JSON (favoritos + avaliações) ────────────
+$router->post('/api/favorito',      [ApiController::class, 'favorito']);
+$router->get('/api/favoritos',      [ApiController::class, 'favoritos']);
+$router->post('/api/avaliar',       [ApiController::class, 'avaliar']);
+$router->get('/api/avaliacao',      [ApiController::class, 'avaliacao']);
+
+// ── Favorito via form (sem JS) ────────────────────
+$router->post('/favorito/remover',  [ApiController::class, 'removerFavorito']);
 
 // ── Painel Admin ──────────────────────────────────────
 $router->get('/admin',           [AdminController::class, 'dashboard']);

@@ -67,14 +67,15 @@ final class Session
     /**
      * Cria a sessão de autenticação para o utilizador.
      *
-     * @param array{id:int, name:string, email:string, role?:string} $user
+     * @param array{id:int, name:string, email:string, role?:string, avatar?:string|null} $user
      */
     public function login(array $user): static
     {
-        $_SESSION['user_id']   = $user['id'];
-        $_SESSION['user_name'] = $user['name'];
-        $_SESSION['user_email']= $user['email'];
-        $_SESSION['user_role'] = $user['role'] ?? 'user';
+        $_SESSION['user_id']     = $user['id'];
+        $_SESSION['user_name']   = $user['name'];
+        $_SESSION['user_email']  = $user['email'];
+        $_SESSION['user_role']   = $user['role'] ?? 'user';
+        $_SESSION['user_avatar'] = $user['avatar'] ?? null;
         return $this;
     }
 

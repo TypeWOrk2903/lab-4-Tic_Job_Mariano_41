@@ -7,6 +7,7 @@ namespace WebMovies\Controllers\Web;
 use WebMovies\Support\Request;
 use WebMovies\Support\Session;
 use WebMovies\Models\Genre;
+use WebMovies\Models\Favorite;
 
 /**
  * WebController — Área pública do WebMovies.
@@ -65,6 +66,7 @@ final class WebController
             'userAvatar'   => $s->get('user_avatar'),
             'genres'       => Genre::all(),
             'userTmdbIds'  => $loggedIn ? Genre::userTmdbIds($userId) : [],
+            'favorites'    => $loggedIn ? Favorite::allByUser($userId) : [],
         ]);
     }
 
