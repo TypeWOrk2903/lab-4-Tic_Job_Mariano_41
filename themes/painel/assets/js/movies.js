@@ -227,6 +227,9 @@ function buildCard(movie) {
     article.setAttribute('tabindex', '0');
     article.setAttribute('aria-label', title);
 
+    const escapedTitle  = title.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    const escapedPoster = (movie.poster_path || '').replace(/"/g,'&quot;');
+
     article.innerHTML = `
         <div class="wm-card__poster" style="position:relative">
             <img loading="lazy" />
@@ -235,15 +238,21 @@ function buildCard(movie) {
                 <span class="wm-score ${cls}">${pct}%</span>
             </div>
             <!-- Botão favorito -->
-            <button class="wm-fav-btn" data-fav="${isFav ? '1' : '0'}"
-                    title="${isFav ? t('card.fav_remove') : t('card.fav_add_title')}"
-                    style="position:absolute;top:6px;right:6px;width:28px;height:28px;border-radius:50%;
-                           border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;
-                           font-size:0.75rem;transition:all .2s;z-index:10;
-                           background:${isFav ? '#f43f5e' : 'rgba(0,0,0,.5)'};
-                           color:${isFav ? '#fff' : '#ccc'};box-shadow:0 1px 6px rgba(0,0,0,.4)">
-              <i class="fa-${isFav ? 'solid' : 'regular'} fa-heart"></i>
-            </button>
+            <form method="POST" action="${CONF_URL_BASE}/api/favorito"
+                  style="position:absolute;top:6px;right:6px;margin:0;padding:0">
+                <input type="hidden" name="tmdb_id" value="${movie.id}">
+                <input type="hidden" name="title" value="${escapedTitle}">
+                <input type="hidden" name="poster_path" value="${escapedPoster}">
+                <button type="submit" class="wm-fav-btn" data-fav="${isFav ? '1' : '0'}"
+                        title="${isFav ? t('card.fav_remove') : t('card.fav_add_title')}"
+                        style="width:28px;height:28px;border-radius:50%;
+                               border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;
+                               font-size:0.75rem;transition:all .2s;z-index:10;
+                               background:${isFav ? '#f43f5e' : 'rgba(0,0,0,.5)'};
+                               color:${isFav ? '#fff' : '#ccc'};box-shadow:0 1px 6px rgba(0,0,0,.4)">
+                  <i class="fa-${isFav ? 'solid' : 'regular'} fa-heart"></i>
+                </button>
+            </form>
         </div>
         <div class="wm-card__body">
             <h3 class="wm-card__title"></h3>
@@ -252,10 +261,14 @@ function buildCard(movie) {
                 ${genreNames.map(() => `<span class="wm-tag"></span>`).join('')}
             </div>
             <!-- Estrelas de avaliação -->
-            <div class="wm-stars" style="display:flex;gap:2px;margin-top:4px;font-size:0.65rem;" data-tmdb="${movie.id}">
-                ${[1,2,3,4,5].map(i => `<i class="fa-regular fa-star wm-star" data-val="${i*2}" style="cursor:pointer;color:#f59e0b;transition:transform .1s"></i>`).join('')}
-                <span class="wm-user-score" style="font-size:0.6rem;color:var(--color-text-muted);margin-left:3px;line-height:1.4"></span>
-            </div>
+            <form method="POST" action="${CONF_URL_BASE}/api/avaliar"
+                  class="wm-stars-form" style="margin:0;padding:0">
+                <input type="hidden" name="tmdb_id" value="${movie.id}">
+                <div class="wm-stars" style="display:flex;gap:2px;margin-top:4px;font-size:0.65rem;" data-tmdb="${movie.id}">
+                    ${[1,2,3,4,5].map(i => `<i class="fa-regular fa-star wm-star" data-val="${i*2}" style="cursor:pointer;color:#f59e0b;transition:transform .1s"></i>`).join('')}
+                    <span class="wm-user-score" style="font-size:0.6rem;color:var(--color-text-muted);margin-left:3px;line-height:1.4"></span>
+                </div>
+            </form>
         </div>`;
 
     // Imagem e textos
@@ -284,6 +297,7 @@ function buildCard(movie) {
     if (favBtn) {
         favBtn.addEventListener('click', async e => {
             e.stopPropagation();
+            e.preventDefault();
             const now = await toggleFavorite(movie);
             favBtn.dataset.fav = now ? '1' : '0';
             favBtn.title = now ? t('card.fav_remove') : t('card.fav_add_title');
@@ -317,6 +331,7 @@ function buildCard(movie) {
         stars.forEach(s => {
             s.addEventListener('click', async e => {
                 e.stopPropagation();
+                e.preventDefault();
                 const val  = parseInt(s.dataset.val);
                 const saved = await submitRating(movie.id, val);
                 if (saved !== null) {
