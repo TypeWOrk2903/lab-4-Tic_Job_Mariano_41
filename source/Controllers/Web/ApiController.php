@@ -42,7 +42,7 @@ final class ApiController
             $this->json(['error' => 'Não autenticado.'], 401);
         }
 
-        $body   = json_decode(file_get_contents('php://input'), true) ?? [];
+        $body   = json_decode(file_get_contents('php://input'), true) ?? $_POST;
         $tmdbId = filter_var($body['tmdb_id'] ?? 0, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
         $title  = substr(strip_tags($body['title']       ?? ''), 0, 255);
         $poster = substr(strip_tags($body['poster_path'] ?? ''), 0, 255);
@@ -84,7 +84,7 @@ final class ApiController
             $this->json(['error' => 'Não autenticado.'], 401);
         }
 
-        $body   = json_decode(file_get_contents('php://input'), true) ?? [];
+        $body   = json_decode(file_get_contents('php://input'), true) ?? $_POST;
         $tmdbId = filter_var($body['tmdb_id'] ?? 0, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
         $rating = filter_var($body['rating']  ?? 0, FILTER_VALIDATE_FLOAT);
 
