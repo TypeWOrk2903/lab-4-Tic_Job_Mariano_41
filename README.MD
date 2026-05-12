@@ -141,6 +141,16 @@ $router->post('/exemplo', [ExemploController::class, 'store']);
 
 ---
 
+## Credenciais de Acesso (Ambiente de Teste)
+
+| Perfil | E-mail | Senha |
+|--------|--------|-------|
+| Utilizador | `teste@webmovies.dev` | `Teste@2026` |
+
+> **Atenção:** estas credenciais são apenas para ambiente local/desenvolvimento. Não as utilize em produção.
+
+---
+
 ## Tecnologias
 
 - **Back-end:** PHP 8.1, PDO, Composer, PSR-4
